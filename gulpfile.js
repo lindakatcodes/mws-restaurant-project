@@ -1,12 +1,14 @@
 var gulp = require('gulp');
-var browserSync = require('browser-sync');
+var browserSync = require('browser-sync').create();
 
 gulp.task('browser-sync', function() {
-    browserSync({
+    browserSync.init({
         server: {
             baseDir: "./",
             index: "index.html"
-        }
+        },
+        logLevel: "warn",
+        injectChanges: false
     });
 });
 
