@@ -1,0 +1,23 @@
+{
+  "name": "mws-restaurant-stage-1",
+  "version": "1.0.0",
+  "description": "Stage 1 of Udacity Mobile Web Nanodegree",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lindakatcodes/mws-restaurant-stage-1.git"
+  },
+  "author": "Linda T",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lindakatcodes/mws-restaurant-stage-1/issues"
+  },
+  "homepage": "https://github.com/lindakatcodes/mws-restaurant-stage-1#readme",
+  "devDependencies": {
+    "browser-sync": "^2.24.4",
+    "gulp": "^3.9.1"
+  }
+}
