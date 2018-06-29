@@ -167,7 +167,7 @@ nav h1 a {
   margin: 0;
   max-width: 100%;
   min-width: 100%;
-  min-height: 248px;
+  min-height: 200px;
 }
 #restaurants-list li h1 {
   color: #f18200;
@@ -304,3 +304,114 @@ nav h1 a {
   margin: 0 0 10px;
 }
 
+@media screen and (min-width: 600px) {
+  nav {
+    height: 50px;
+  }
+  nav h1 {
+    padding-top: 1.5%;
+  }
+  #map-container {
+    height: 65vh;
+  }
+  .filter-options select {
+    margin: 2% 5%;
+    width: 38%;
+  }
+  #restaurants-list {
+    display: flex;
+    flex-flow: wrap;
+  }
+  #restaurants-list li {
+    width: 47%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 3% 4%;
+  }
+  #restaurants-list li a {
+    font-size: 1.1em;
+    width: 75%;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .filter-options {
+    height: 25%;
+    display: flex;
+    align-items: baseline;
+  }
+  .filter-options h2 {
+    text-align: left;
+    padding-left: 3%;
+  }
+  .filter-options select {
+    font-size: 1.2em;
+    height: 40px;
+    width: 25%;
+  }
+
+  #restaurants-list {
+    padding: 20px 15px;
+  }
+  #restaurants-list li {
+    margin: 2% auto;
+  }
+  #restaurants-list li h1 {
+    font-size: 1.7em;
+  }
+  #restaurants-list p {
+    font-size: 1.3em;
+  }
+  #restaurants-list li a {
+    font-size: 1.3em;
+    width: 65%;
+  }
+
+  #footer {
+    font-size: 1em;
+    padding: 3% 10% 2%;
+  }
+  #breadcrumb li {
+      font-size: 1.3em;
+  }
+
+  .inside #maincontent {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: space-around;
+  }
+  #restaurant-container {
+    width: 50%;
+    margin: -30vh 0 5vh;
+    padding: 0;
+  }
+  #restaurant-name {
+    font-size: 2em;
+    padding: 0 5%;
+  }
+  #restaurant-cuisine {
+    width: 90%;
+    margin: 1% 5%;
+  }
+
+  #reviews-container {
+    width: 50%;
+    margin: 2vh 0 10vh;
+    padding: 0;
+  }
+  #reviews-container h2 {
+    font-size: 2em;
+  }
+
+  .inside #map-container {
+    order: -1;
+    margin-top: 15vh;
+    margin-bottom: 5vh;
+  }
+
+}
+
+@media screen and (min-width: 1000px) {
+  
+}
