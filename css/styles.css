@@ -383,7 +383,7 @@ nav h1 a {
   }
   #restaurant-container {
     width: 50%;
-    margin: -30vh 0 5vh;
+    margin: -45% 0 5vh;
     padding: 0;
   }
   #restaurant-name {
@@ -407,11 +407,61 @@ nav h1 a {
   .inside #map-container {
     order: -1;
     margin-top: 15vh;
-    margin-bottom: 5vh;
+    margin-bottom: 10%;
   }
 
 }
 
 @media screen and (min-width: 1000px) {
-  
+  nav {
+    height: 75px;
+  }
+
+  nav h1 a {
+    font-size: 1.5em;
+  }
+
+  #restaurants-list li {
+    width: 32%;
+  }
+  #restaurants-list li a {
+    font-size: 1em;
+    width: 60%;
+  }
+
+  .inside #map-container {
+    order: 0;
+    width: 45%;
+    margin-top: 12vh;
+    height: 85vh;
+  }
+
+  #restaurant-container {
+    margin-top: 20vh;
+  }
+
+  #reviews-container {
+    width: 80%;
+  }
+
+  #reviews-list li p {
+    font-size: 1.2em;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  html {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #f3f3f3;
+  }
+
+  header {
+    max-width: 1200px;
+  }
+
+  .filter-options h2 {
+    font-size: 1.6em;
+  }
 }
