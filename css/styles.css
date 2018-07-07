@@ -54,6 +54,10 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   text-transform: uppercase;
   max-width: 100%;
 }
+#footer a:focus {
+  outline: 2px solid orange;
+  padding: 2px;
+}
 /* ====================== Navigation ====================== */
 nav {
   width: 100%;
@@ -70,6 +74,10 @@ nav h1 a {
   font-weight: 200;
   letter-spacing: 10px;
   text-transform: uppercase;
+}
+nav h1 a:focus {
+  outline: 3px solid orange;
+  padding: 2px 4px;
 }
 #breadcrumb {
     padding: 10px 20px 16px;
@@ -100,8 +108,12 @@ nav h1 a {
 
 /* Add a color on mouse-over */
 #breadcrumb li a:hover {
-    color: #01447e;
+    color: orange;
     text-decoration: underline;
+}
+#breadcrumb li a:focus {
+  outline: 2px solid orange;
+  padding: 2px;
 }
 /* ====================== Map ====================== */
 #map-container {
@@ -141,6 +153,10 @@ nav h1 a {
   margin: 10px;
   padding: 0 10px;
   width: 43%;
+}
+#neighborhoods-select:focus, 
+#cuisines-select:focus {
+  outline: 4px solid orange;
 }
 
 /* ====================== Restaurant Listing ====================== */
@@ -194,6 +210,13 @@ nav h1 a {
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
+}
+#restaurants-list li a:focus,
+#restaurants-list li a:hover {
+  background-color: #3397db;
+  outline: 0;
+  box-shadow: 7px 7px 5px #444;
+  border-bottom: none;
 }
 
 /* ====================== Restaurant Details ====================== */
