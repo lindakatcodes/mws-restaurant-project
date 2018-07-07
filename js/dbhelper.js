@@ -9,7 +9,7 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 3000 // Change this to your server port
-    return `https://lindakatcodes.github.io/data/restaurants.json`;
+    return `https://lindakatcodes.github.io/mws-restaurant-stage-1/data/restaurants.json`;
   }
 
   /**
