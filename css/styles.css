@@ -67,6 +67,7 @@ nav {
 }
 nav h1 {
   margin: auto;
+  padding-top: 1.5%;
 }
 nav h1 a {
   color: #fff;
@@ -327,13 +328,14 @@ nav h1 a:focus {
   margin: 0 0 10px;
 }
 
-@media screen and (min-width: 600px) {
+/* Breakpoints */
+@media screen and (min-width: 475px) {
   nav {
     height: 50px;
   }
-  nav h1 {
-    padding-top: 1.5%;
-  }
+}
+
+@media screen and (min-width: 600px) {
   #map-container {
     height: 65vh;
   }
