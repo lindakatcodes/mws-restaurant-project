@@ -10,7 +10,6 @@ self.addEventListener('install', function(event) {
                 '/js/restaurant_info.js',
                 '/sw.js',
                 '/css/styles.css',
-                '/data/restaurants.json',
                 '/restaurant.html',
                 '/index.html',
                 '/img/optimized/1-optimized.jpg',
@@ -50,8 +49,6 @@ self.addEventListener('fetch', function(event) {
             if (response) {
                 return response;
             }
-
-            console.log(`Sorry, ${event.request.url} wasn't in the cache! Let me get that for you.`);
             return fetch(event.request);
         }) 
     );
