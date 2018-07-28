@@ -1,9 +1,14 @@
-var gulp = require('gulp');
-var browserSync = require('browser-sync').create();
-var imageMin = require('gulp-imagemin');
-var resize = require('gulp-image-resize');
-var rename = require('gulp-rename');
-var del = require('del');
+const gulp = require('gulp');
+const browserSync = require('browser-sync').create();
+const imageMin = require('gulp-imagemin');
+const resize = require('gulp-image-resize');
+const rename = require('gulp-rename');
+const del = require('del');
+const sourcemaps = require('gulp-sourcemaps');
+const concat = require('gulp-concat');
+const babel = require('gulp-babel');
+const prefix = require('gulp-autoprefixer');
+const uglify = require('gulp-uglify');
 
 // Reduce images functions
 gulp.task('clean', function() {
