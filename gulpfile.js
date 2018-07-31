@@ -9,13 +9,22 @@ const concat = require('gulp-concat');
 const babel = require('gulp-babel');
 const prefix = require('gulp-autoprefixer');
 const uglify = require('gulp-uglify');
+const cssMin = require('gulp-csso');
 
 // Reduce images functions
-gulp.task('clean', function() {
+gulp.task('clean-images', function() {
     return del('./img/optimized');
 });
 
-gulp.task('reduce-images', ['clean'], function() {
+gulp.task('clean-dist-css', function() {
+    return del('./dist/css');
+});
+
+gulp.task('clean-dist-js', function() {
+    return del('./dist/js');
+});
+
+gulp.task('reduce-images', ['clean-images'], function() {
     gulp.src('./img/*.{jpg, png}') 
         .pipe(resize({ 
             width: 800, 
@@ -43,13 +52,24 @@ gulp.task('html', function() {
     .pipe(browserSync.reload({stream:true}));
 });
 
-gulp.task('css', function() {
+gulp.task('css', ['clean-dist-css'], function() {
     gulp.src('./css/*.css')
+    .pipe(sourcemaps.init())
+    .pipe(prefix())
+    .pipe(cssMin())
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('dist/css'))
     .pipe(browserSync.reload({stream:true}));
 });
 
-gulp.task('js', function() {
+gulp.task('js', ['clean-dist-js'], function() {
     gulp.src('./js/*.js')
+    .pipe(sourcemaps.init())
+    .pipe(babel())
+    .pipe(concat('scripts.js'))
+    .pipe(uglify())
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('dist/js'))
     .pipe(browserSync.reload({stream:true}));
 });
 

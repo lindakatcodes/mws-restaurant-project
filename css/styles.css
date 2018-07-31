@@ -455,7 +455,7 @@ nav h1 a:focus {
   }
 
   .inside #map-container {
-    order: 0;
+    border: 0;
     width: 45%;
     margin-top: 12vh;
     height: 85vh;
