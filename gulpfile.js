@@ -6,9 +6,8 @@ const rename = require('gulp-rename');
 const del = require('del');
 const sourcemaps = require('gulp-sourcemaps');
 const concat = require('gulp-concat');
-const babel = require('gulp-babel');
 const prefix = require('gulp-autoprefixer');
-const uglify = require('gulp-uglify');
+const uglify = require('gulp-uglify-es').default;
 const cssMin = require('gulp-csso');
 
 // Reduce images functions
@@ -17,7 +16,7 @@ gulp.task('clean-images', function() {
 });
 
 gulp.task('clean-dist-css', function() {
-    return del('./dist/css');
+    return del('./dist/css/*.css');
 });
 
 gulp.task('clean-dist-js', function() {
@@ -62,14 +61,26 @@ gulp.task('css', ['clean-dist-css'], function() {
     .pipe(browserSync.reload({stream:true}));
 });
 
-gulp.task('js', ['clean-dist-js'], function() {
-    gulp.src('./js/*.js')
+gulp.task('main-js', ['clean-dist-js'], function() {
+    gulp.src(['./js/dbhelper.js', './js/main.js'])
     .pipe(sourcemaps.init())
-    .pipe(babel())
-    .pipe(concat('scripts.js'))
+    .pipe(concat('index.js'))
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist/js'))
+});
+
+gulp.task('single-js', ['clean-dist-js'], function() {
+    gulp.src(['./js/dbhelper.js', './js/restaurant_info.js'])
+    .pipe(sourcemaps.init())
+    .pipe(concat('restaurant.js'))
+    .pipe(uglify())
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('dist/js'))
+});
+
+gulp.task('js', ['clean-dist-js', 'main-js', 'single-js'], function() {
+    gulp.src('./dist/js/*.js')
     .pipe(browserSync.reload({stream:true}));
 });
 
@@ -79,4 +90,6 @@ gulp.task('watch', function() {
     gulp.watch('./js/*.js', ['js']);
 });
 
-gulp.task('start', ['browser-sync', 'watch']);
+gulp.task('build', ['main-js', 'single-js', 'js', 'css']);
+
+gulp.task('start', ['browser-sync', 'build', 'watch']);
