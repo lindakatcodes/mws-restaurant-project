@@ -5,23 +5,12 @@ self.addEventListener('install', function(event) {
         caches.open(currentCacheName).then(function(cache) {
             return cache.addAll([
                 '/',
-                '/js/dbhelper.js',
-                '/js/main.js',
-                '/js/restaurant_info.js',
-                '/sw.js',
-                '/css/styles.css',
+                '/dist/css/styles.css',
+                '/dist/js/index.js',
+                '/dist/js/restaurant.js',
                 '/restaurant.html',
                 '/index.html',
-                '/img/optimized/1-optimized.jpg',
-                '/img/optimized/2-optimized.jpg',
-                '/img/optimized/3-optimized.jpg',
-                '/img/optimized/4-optimized.jpg',
-                '/img/optimized/5-optimized.jpg',
-                '/img/optimized/6-optimized.jpg',
-                '/img/optimized/7-optimized.jpg',
-                '/img/optimized/8-optimized.jpg',
-                '/img/optimized/9-optimized.jpg',
-                '/img/optimized/10-optimized.jpg'
+                '/idb.js'
             ]);
         })
     );

@@ -64,7 +64,7 @@ gulp.task('css', ['clean-dist-css'], function() {
 gulp.task('main-js', ['clean-dist-js'], function() {
     gulp.src(['./js/dbhelper.js', './js/main.js'])
     .pipe(sourcemaps.init())
-    .pipe(concat('index.js'))
+    .pipe(concat('index.js', {newLine: '\r\n'}))
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist/js'))
@@ -73,7 +73,7 @@ gulp.task('main-js', ['clean-dist-js'], function() {
 gulp.task('single-js', ['clean-dist-js'], function() {
     gulp.src(['./js/dbhelper.js', './js/restaurant_info.js'])
     .pipe(sourcemaps.init())
-    .pipe(concat('restaurant.js'))
+    .pipe(concat('restaurant.js', {newLine: '\r\n'}))
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist/js'))
