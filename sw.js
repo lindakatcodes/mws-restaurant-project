@@ -5,11 +5,11 @@ self.addEventListener('install', function(event) {
         caches.open(currentCacheName).then(function(cache) {
             return cache.addAll([
                 '/',
+                '/index.html',
+                '/restaurant.html',
                 '/dist/css/styles.css',
                 '/dist/js/index.js',
                 '/dist/js/restaurant.js',
-                '/restaurant.html',
-                '/index.html',
                 '/idb.js'
             ]);
         })

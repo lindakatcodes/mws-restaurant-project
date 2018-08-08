@@ -5,17 +5,6 @@ var newMap
 var markers = []
 
 /**
- * Open our idb db & create the objectStore
- */
-const dbPromise = idb.open('restaurantReviewSite', 2, function (upgradeDb) {
-  const restStore = upgradeDb.createObjectStore('restReviews', {
-    keypath: 'id'
-  });
-});
-
-
-
-/**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -147,16 +136,9 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   const ul = document.getElementById('restaurants-list');
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
-
-    dbPromise.then(function(db) {
-      const tx = db.transaction('restReviews', 'readwrite');
-      const restStore = tx.objectStore('restReviews');
-      restStore.add(restaurant, restaurant.id);
-      return tx.complete;
-    }).then(console.log(`Restaurant ${restaurant.id} added.`));
+    addMarkersToMap();
   });
-  addMarkersToMap();
-}
+};  
 
 /**
  * Create restaurant HTML.

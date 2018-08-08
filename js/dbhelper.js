@@ -1,6 +1,14 @@
 /**
  * Common database helper functions.
  */
+
+ // First - open our db, or initialize if it's the first time
+ const dbPromise = idb.open('restaurantReviewSite', 1, function (upgradeDb) {
+  upgradeDb.createObjectStore('restReviews', {
+    keypath: 'id'
+  });
+});
+
 class DBHelper {
 
   /**
@@ -16,35 +24,61 @@ class DBHelper {
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
+    // First - try to fetch the data from the server
     fetch(DBHelper.DATABASE_URL)
-    .then(response => response.json())
-    .then(function(response) {
-      if (response) {
-        const restaurants = response;
-        callback(null, restaurants);
-      } else {
-        const error = (`Request failed: ${response.status} - ${response.statusText}`);
-        callback(error, null);
-      }
-    })
-    }
-
-/*
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();
+      .then(response => response.json()) // parse the server response
+      .then(function (response) {
+        if (response) { // if we got a response, set the restaurants value to that and add to idb if not there
+          const restaurants = response;
+          restaurants.forEach(restaurant => {
+            dbPromise.then(async db => { // start a separate transaction for each restaurant, to see if it's in db
+              const tx = db.transaction('restReviews', 'readwrite');
+              const restStore = tx.objectStore('restReviews');
+              // try to get restaurant by id - if it's there, just say it's there - if not, add to db
+              const request = await restStore.get(restaurant.id);
+              if (!request) {
+                console.log('store is not in db, adding now');
+                restStore.add(restaurant, restaurant.id);
+              }
+            });
+          });
+          callback(null, restaurants);
+        } else { // otherwise, there's no data and an error is thrown - data doesn't exist at all, even if online
+          const error = (`Request failed: ${response.status} - ${response.statusText}`);
+          callback(error, null);
+        }
+      })
+      // then, if the fetch fails, we call our db and check there
+      .catch(function () {
+        dbPromise.then(function(db) {
+          const tx = db.transaction('restReviews', 'readwrite');
+          const restStore = tx.objectStore('restReviews');
+          return restStore.getAll();
+        })
+        .then(function(response) {
+          console.log('Pulling restaurant info from db...');
+          const restaurants = response;
+          callback(null, restaurants);
+        })
+      });
   }
-*/
+
+  /*
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', DBHelper.DATABASE_URL);
+      xhr.onload = () => {
+        if (xhr.status === 200) { // Got a success response from server!
+          const json = JSON.parse(xhr.responseText);
+          const restaurants = json.restaurants;
+          callback(null, restaurants);
+        } else { // Oops!. Got an error from server.
+          const error = (`Request failed. Returned status of ${xhr.status}`);
+          callback(error, null);
+        }
+      };
+      xhr.send();
+    }
+  */
 
   /**
    * Fetch a restaurant by its ID.
@@ -171,14 +205,15 @@ class DBHelper {
   /**
    * Map marker for a restaurant.
    */
-   static mapMarkerForRestaurant(restaurant, map) {
+  static mapMarkerForRestaurant(restaurant, map) {
     // https://leafletjs.com/reference-1.3.0.html#marker  
     const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng],
-      {title: restaurant.name,
-      alt: restaurant.name,
-      url: DBHelper.urlForRestaurant(restaurant)
+      {
+        title: restaurant.name,
+        alt: restaurant.name,
+        url: DBHelper.urlForRestaurant(restaurant)
       })
-      marker.addTo(newMap);
+    marker.addTo(newMap);
     return marker;
   }
 }
