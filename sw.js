@@ -1,4 +1,4 @@
-const currentCacheName = 'restaurant-reviews-v2';
+const currentCacheName = 'restaurant-reviews-v1';
 
 self.addEventListener('install', function(event) {
     event.waitUntil(
@@ -10,7 +10,18 @@ self.addEventListener('install', function(event) {
                 '/dist/css/styles.css',
                 '/dist/js/index.js',
                 '/dist/js/restaurant.js',
-                '/idb.js'
+                '/idb.js',
+                '/sw.js',
+                '/img/optimized/1-optimized.jpg',
+                '/img/optimized/2-optimized.jpg',
+                '/img/optimized/3-optimized.jpg',
+                '/img/optimized/4-optimized.jpg',
+                '/img/optimized/5-optimized.jpg',
+                '/img/optimized/6-optimized.jpg',
+                '/img/optimized/7-optimized.jpg',
+                '/img/optimized/8-optimized.jpg',
+                '/img/optimized/9-optimized.jpg',
+                '/img/optimized/10-optimized.jpg'
             ]);
         })
     );
@@ -34,7 +45,7 @@ self.addEventListener('activate', function(event) {
 
 self.addEventListener('fetch', function(event) {
     event.respondWith(
-        caches.match(event.request).then(function(response) {
+        caches.match(event.request, { ignoreSearch: true }).then(function(response) {
             if (response) {
                 return response;
             }
