@@ -26,41 +26,41 @@ class DBHelper {
   static fetchRestaurants(callback) {
     // First - try to fetch the data from the server
     fetch(DBHelper.DATABASE_URL)
-      .then(response => response.json()) // parse the server response
-      .then(function (response) {
-        if (response) { // if we got a response, set the restaurants value to that and add to idb if not there
-          const restaurants = response;
-          restaurants.forEach(restaurant => {
-            dbPromise.then(async db => { // start a separate transaction for each restaurant, to see if it's in db
-              const tx = db.transaction('restReviews', 'readwrite');
-              const restStore = tx.objectStore('restReviews');
-              // try to get restaurant by id - if it's there, just say it's there - if not, add to db
-              const request = await restStore.get(restaurant.id);
-              if (!request) {
-                console.log('store is not in db, adding now');
-                restStore.add(restaurant, restaurant.id);
-              }
-            });
+    .then(response => response.json()) // parse the server response
+    .then(function (response) {
+      if (response) { // if we got a response, set the restaurants value to that and add to idb if not there
+        const restaurants = response;
+        restaurants.forEach(restaurant => {
+          dbPromise.then(async db => { // start a separate transaction for each restaurant, to see if it's in db
+            const tx = db.transaction('restReviews', 'readwrite');
+            const restStore = tx.objectStore('restReviews');
+            // try to get restaurant by id - if it's there, just say it's there - if not, add to db
+            const request = await restStore.get(restaurant.id);
+            if (!request) {
+              console.log('store is not in db, adding now');
+              restStore.add(restaurant, restaurant.id);
+            }
           });
-          callback(null, restaurants);
-        } else { // otherwise, there's no data and an error is thrown - data doesn't exist at all, even if online
-          const error = (`Request failed: ${response.status} - ${response.statusText}`);
-          callback(error, null);
-        }
+        });
+        callback(null, restaurants);
+      } else { // otherwise, there's no data and an error is thrown - data doesn't exist at all, even if online
+        const error = (`Request failed: ${response.status} - ${response.statusText}`);
+        callback(error, null);
+      }
+    })
+    .catch(function () { // then, if the fetch fails, we call our db and check there
+      console.log(`Sorry, your internet doesn't seem to be working. Pulling cached data for you now!`);
+
+      dbPromise.then(function(db) {
+        const tx = db.transaction('restReviews', 'readwrite');
+        const restStore = tx.objectStore('restReviews');
+        return restStore.getAll();
       })
-      // then, if the fetch fails, we call our db and check there
-      .catch(function () {
-        dbPromise.then(function(db) {
-          const tx = db.transaction('restReviews', 'readwrite');
-          const restStore = tx.objectStore('restReviews');
-          return restStore.getAll();
-        })
-        .then(function(response) {
-          console.log('Pulling restaurant info from db...');
-          const restaurants = response;
-          callback(null, restaurants);
-        })
-      });
+      .then(function(response) {
+        const restaurants = response;
+        callback(null, restaurants);
+      })
+    });
   }
 
   /*
