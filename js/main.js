@@ -146,6 +146,17 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
 
+  const fav = document.createElement('button');
+  fav.className = ('favButton');
+  const favOn = document.createElement('img'); 
+  favOn.src = `./img/icons/fav_on.svg`;
+  favOn.className = 'favorite on hide';
+  const favOff = document.createElement('img');
+  favOff.src = `./img/icons/fav_off.svg`;
+  favOff.className = 'favorite off';
+  fav.append(favOff, favOn);
+  li.append(fav);
+
   const image = document.createElement('img');
   image.className = 'restaurant-img';
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
@@ -188,3 +199,14 @@ addMarkersToMap = (restaurants = self.restaurants) => {
   });
 
 } 
+
+// function to toggle favorite button
+const trigger = document.querySelector('.favButton');
+
+trigger.addEventListener('click', function(e) {
+  e.preventDefault();
+  const on = document.querySelector('.on');
+  const off = document.querySelector('.off');
+  on.classList.toggle('hide');
+  off.classList.toggle('hide');
+});

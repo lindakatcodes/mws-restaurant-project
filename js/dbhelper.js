@@ -17,7 +17,7 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337; // Change this to your server port
-    return `http://localhost:${port}/restaurants`;
+    return `http://localhost:${port}/`;
   }
 
   /**
@@ -25,7 +25,7 @@ class DBHelper {
    */
   static fetchRestaurants(callback) {
     // First - try to fetch the data from the server
-    fetch(DBHelper.DATABASE_URL)
+    fetch(`${DBHelper.DATABASE_URL}restaurants`)
     .then(response => response.json()) // parse the server response
     .then(function (response) {
       if (response) { // if we got a response, set the restaurants value to that and add to idb if not there
@@ -63,22 +63,24 @@ class DBHelper {
     });
   }
 
-  /*
-      let xhr = new XMLHttpRequest();
-      xhr.open('GET', DBHelper.DATABASE_URL);
-      xhr.onload = () => {
-        if (xhr.status === 200) { // Got a success response from server!
-          const json = JSON.parse(xhr.responseText);
-          const restaurants = json.restaurants;
-          callback(null, restaurants);
-        } else { // Oops!. Got an error from server.
-          const error = (`Request failed. Returned status of ${xhr.status}`);
-          callback(error, null);
-        }
-      };
-      xhr.send();
-    }
-  */
+  static fetchReviewsById(id, callback) {
+    // First - try to fetch the data from the server
+    const reviewURL = `${DBHelper.DATABASE_URL}reviews/?restaurant_id=${id}`; 
+    fetch(reviewURL)
+    .then(response => response.json()) // parse the server response
+    .then(function (response) {
+      if (response) {
+        const reviews = response;
+        callback(null, reviews);
+      } else { // otherwise, there's no data and an error is thrown - data doesn't exist at all, even if online
+        const error = (`Request failed: ${response.status} - ${response.statusText}`);
+        callback(error, null);
+      }
+    })
+    .catch(function () { // then, if the fetch fails, we call our db and check there
+      console.log(`Didn't call fetch`);
+    });
+  }
 
   /**
    * Fetch a restaurant by its ID.
