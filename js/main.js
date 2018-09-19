@@ -146,6 +146,12 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
 
+  const image = document.createElement('img');
+  image.className = 'restaurant-img';
+  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.alt = `A photo showcasing the atmosphere of ${restaurant.name}`;
+  li.append(image);
+
   const fav = document.createElement('button');
   fav.className = ('favButton');
   const favOn = document.createElement('img'); 
@@ -157,12 +163,17 @@ createRestaurantHTML = (restaurant) => {
   fav.append(favOff, favOn);
   li.append(fav);
 
-  const image = document.createElement('img');
-  image.className = 'restaurant-img';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
-  image.alt = `A photo showcasing the atmosphere of ${restaurant.name}`;
-  li.append(image);
+  // function to toggle favorite button
+  const trigger = li.querySelector('.favButton');
 
+  trigger.addEventListener('click', function(e) {
+    e.preventDefault();
+    const on = trigger.querySelector('.on');
+    const off = trigger.querySelector('.off');
+    on.classList.toggle('hide');
+    off.classList.toggle('hide');
+  });
+  
   const name = document.createElement('h3');
   name.innerHTML = restaurant.name;
   li.append(name);
@@ -200,13 +211,3 @@ addMarkersToMap = (restaurants = self.restaurants) => {
 
 } 
 
-// function to toggle favorite button
-const trigger = document.querySelector('.favButton');
-
-trigger.addEventListener('click', function(e) {
-  e.preventDefault();
-  const on = document.querySelector('.on');
-  const off = document.querySelector('.off');
-  on.classList.toggle('hide');
-  off.classList.toggle('hide');
-});
