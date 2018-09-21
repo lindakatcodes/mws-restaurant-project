@@ -3,8 +3,8 @@
  */
 
  // First - open our db, or initialize if it's the first time
- const dbPromise = idb.open('restaurantReviewSite', 1, function (upgradeDb) {
-  upgradeDb.createObjectStore('restReviews', {
+ const dbPromise = idb.open('restaurantReviewSite', 2, function (upgradeDb) {
+  upgradeDb.createObjectStore('storeInfo', {
     keypath: 'id'
   });
 });
@@ -32,13 +32,13 @@ class DBHelper {
         const restaurants = response;
         restaurants.forEach(restaurant => {
           dbPromise.then(async db => { // start a separate transaction for each restaurant, to see if it's in db
-            const tx = db.transaction('restReviews', 'readwrite');
-            const restStore = tx.objectStore('restReviews');
+            const tx = db.transaction('storeInfo', 'readwrite');
+            const store = tx.objectStore('storeInfo');
             // try to get restaurant by id - if it's there, just say it's there - if not, add to db
-            const request = await restStore.get(restaurant.id);
+            const request = await store.get(restaurant.id);
             if (!request) {
               console.log('store is not in db, adding now');
-              restStore.add(restaurant, restaurant.id);
+              store.add(restaurant, restaurant.id);
             }
           });
         });
@@ -52,9 +52,9 @@ class DBHelper {
       console.log(`Sorry, your internet doesn't seem to be working. Pulling cached data for you now!`);
 
       dbPromise.then(function(db) {
-        const tx = db.transaction('restReviews', 'readwrite');
-        const restStore = tx.objectStore('restReviews');
-        return restStore.getAll();
+        const tx = db.transaction('storeInfo', 'readwrite');
+        const store = tx.objectStore('storeInfo');
+        return store.getAll();
       })
       .then(function(response) {
         const restaurants = response;
@@ -218,5 +218,23 @@ class DBHelper {
     marker.addTo(newMap);
     return marker;
   }
-}
 
+  // Toggle favorite status
+  static favStatus(status, id) {
+    dbPromise.then(async db => {
+      const tx = db.transaction('storeInfo', 'readwrite');
+      const store = tx.objectStore('storeInfo');
+      
+      const req = await store.get(id);
+      console.log(req);
+      const currStore = req;
+      currStore.is_favorite = status;
+      console.log(`after: ${currStore.is_favorite}`);
+      store.put(currStore, id);
+      return tx.complete;
+    })
+    .then(function() {
+      console.log('transaction complete!');
+    })
+  }
+} //end of class
