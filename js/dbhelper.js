@@ -226,10 +226,11 @@ class DBHelper {
       const store = tx.objectStore('storeInfo');
       
       const req = await store.get(id);
-      console.log(req);
       const currStore = req;
       currStore.is_favorite = status;
-      console.log(`after: ${currStore.is_favorite}`);
+      fetch(`http://localhost:1337/restaurants/${id}/?is_favorite=${status}`, {
+        method: 'PUT'
+      });
       store.put(currStore, id);
       return tx.complete;
     })

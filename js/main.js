@@ -160,10 +160,10 @@ createRestaurantHTML = (restaurant) => {
   const favOff = document.createElement('img');
   favOff.src = `./img/icons/fav_off.svg`;
   favOff.className = 'favorite off';
-  if (restaurant.is_favorite === true) {
-    favOff.classList.add('hide');
-  } else if (restaurant.is_favorite === false) {
+   if (restaurant.is_favorite === false) {
     favOn.classList.add('hide');
+  } else if (restaurant.is_favorite === true) {
+    favOff.classList.add('hide');
   }
   fav.append(favOff, favOn);
   li.append(fav);
@@ -176,13 +176,11 @@ createRestaurantHTML = (restaurant) => {
     const on = trigger.querySelector('.on');
     const off = trigger.querySelector('.off');
 
-    // if on current has the hide class, remove it & pass off as status
     if (on.classList.contains('hide')) {
       DBHelper.favStatus(true, restaurant.id);
       on.classList.toggle('hide');
       off.classList.toggle('hide');
     } else if (off.classList.contains('hide')) {
-      // else, add hide to on & pass on as status
       DBHelper.favStatus(false, restaurant.id);
       on.classList.toggle('hide');
       off.classList.toggle('hide');
