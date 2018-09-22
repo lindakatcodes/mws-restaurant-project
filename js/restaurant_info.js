@@ -88,6 +88,25 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   cuisine.innerHTML = restaurant.cuisine_type;
   cuisine.setAttribute('aria-label', `${restaurant.cuisine_type} restaurant`);
 
+  const favOn = document.createElement('img'); 
+  favOn.src = `./img/icons/fav_on.svg`;
+  favOn.className = 'favorite on';
+  const favOff = document.createElement('img');
+  favOff.src = `./img/icons/fav_off.svg`;
+  favOff.className = 'favorite off';
+   if (restaurant.is_favorite === false) {
+    favOn.classList.add('hide');
+  } else if (restaurant.is_favorite === true) {
+    favOff.classList.add('hide');
+  }
+  const favButton = document.getElementById('fav');
+  favButton.append(favOn, favOff);
+  
+  favButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    DBHelper.toggleFav(favButton);
+  })
+
   // fill operating hours
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();

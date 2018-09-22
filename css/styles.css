@@ -197,7 +197,7 @@ nav h1 a:focus {
   text-transform: uppercase;
 }
 
-#restaurants-list .favButton {
+.favButton {
   background: white;
   border: none;
   position: relative;
@@ -207,7 +207,7 @@ nav h1 a:focus {
   padding: 3px;
 }
 
-#restaurants-list .favorite {
+.favorite {
   position: absolute;
   left: 0;
   top: 0;
@@ -217,7 +217,7 @@ nav h1 a:focus {
   transition: opacity 0.55s ease-out;
 }
 
-#restaurants-list .hide {
+.hide {
   opacity: 0;
 }
 
@@ -482,7 +482,7 @@ nav h1 a:focus {
   .inside #map-container {
     border: 0;
     width: 45%;
-    margin-top: 12vh;
+    margin-top: 0;
     height: 85vh;
   }
 

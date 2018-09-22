@@ -168,24 +168,12 @@ createRestaurantHTML = (restaurant) => {
   fav.append(favOff, favOn);
   li.append(fav);
 
-  // function to toggle favorite button
   const trigger = li.querySelector('.favButton');
-
+  
   trigger.addEventListener('click', function(e) {
     e.preventDefault();
-    const on = trigger.querySelector('.on');
-    const off = trigger.querySelector('.off');
-
-    if (on.classList.contains('hide')) {
-      DBHelper.favStatus(true, restaurant.id);
-      on.classList.toggle('hide');
-      off.classList.toggle('hide');
-    } else if (off.classList.contains('hide')) {
-      DBHelper.favStatus(false, restaurant.id);
-      on.classList.toggle('hide');
-      off.classList.toggle('hide');
-    }
-  });
+    DBHelper.toggleFav(trigger);
+  })
   
   const name = document.createElement('h3');
   name.innerHTML = restaurant.name;
