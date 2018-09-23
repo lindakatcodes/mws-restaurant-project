@@ -160,11 +160,12 @@ createRestaurantHTML = (restaurant) => {
   const favOff = document.createElement('img');
   favOff.src = `./img/icons/fav_off.svg`;
   favOff.className = 'favorite off';
-   if (restaurant.is_favorite === false) {
-    favOn.classList.add('hide');
-  } else if (restaurant.is_favorite === true) {
+  if (restaurant.is_favorite == 'true') {
     favOff.classList.add('hide');
   }
+  if (restaurant.is_favorite == 'false') {
+  favOn.classList.add('hide');
+  } 
   fav.append(favOff, favOn);
   li.append(fav);
 

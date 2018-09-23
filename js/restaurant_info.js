@@ -94,9 +94,9 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const favOff = document.createElement('img');
   favOff.src = `./img/icons/fav_off.svg`;
   favOff.className = 'favorite off';
-   if (restaurant.is_favorite === false) {
+   if (restaurant.is_favorite == 'false') {
     favOn.classList.add('hide');
-  } else if (restaurant.is_favorite === true) {
+  } else if (restaurant.is_favorite == 'true') {
     favOff.classList.add('hide');
   }
   const favButton = document.getElementById('fav');
@@ -104,7 +104,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   
   favButton.addEventListener('click', function(e) {
     e.preventDefault();
-    DBHelper.toggleFav(favButton);
+    DBHelper.toggleFav(favButton, restaurant.id);
   })
 
   // fill operating hours

@@ -246,11 +246,11 @@ class DBHelper {
     const off = button.querySelector('.off');
 
     if (on.classList.contains('hide')) {
-      DBHelper.favStatus(true, id);
+      DBHelper.favStatus('true', id);
       on.classList.toggle('hide');
       off.classList.toggle('hide');
     } else if (off.classList.contains('hide')) {
-      DBHelper.favStatus(false, id);
+      DBHelper.favStatus('false', id);
       on.classList.toggle('hide');
       off.classList.toggle('hide');
     }
