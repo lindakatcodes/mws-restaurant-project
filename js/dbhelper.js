@@ -239,18 +239,18 @@ class DBHelper {
     })
   }
 
-  static toggleFav(button) {
+  static toggleFav(button, id) {
     // function to toggle favorite button
-    const trigger = document.querySelector(button);
-    const on = trigger.querySelector('.on');
-    const off = trigger.querySelector('.off');
+    console.log(button);
+    const on = button.querySelector('.on');
+    const off = button.querySelector('.off');
 
     if (on.classList.contains('hide')) {
-      DBHelper.favStatus(true, restaurant.id);
+      DBHelper.favStatus(true, id);
       on.classList.toggle('hide');
       off.classList.toggle('hide');
     } else if (off.classList.contains('hide')) {
-      DBHelper.favStatus(false, restaurant.id);
+      DBHelper.favStatus(false, id);
       on.classList.toggle('hide');
       off.classList.toggle('hide');
     }

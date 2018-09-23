@@ -172,7 +172,7 @@ createRestaurantHTML = (restaurant) => {
   
   trigger.addEventListener('click', function(e) {
     e.preventDefault();
-    DBHelper.toggleFav(trigger);
+    DBHelper.toggleFav(trigger, restaurant.id);
   })
   
   const name = document.createElement('h3');
