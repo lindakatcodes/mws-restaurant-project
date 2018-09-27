@@ -353,7 +353,59 @@ nav h1 a:focus {
   margin: 0 0 10px;
 }
 
-/* Breakpoints */
+/* ====================== Add Review Form ====================== */
+#addReview {
+  border: 1px solid #333;
+  width: 85%;
+  margin: 0 auto;
+  padding: 2% 0 4% 0;
+}
+
+#addReview h4 {
+  text-align: center;
+}
+
+.addReviewForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.formDivider {
+  padding: 2% 0 2% 0;
+  width: 95%;
+}
+
+.formDivider label {
+  width: 30%;
+  float: left;
+  text-align: right;
+  padding-right: 3%;
+}
+
+.formDivider input, .formDivider textarea {
+  width: 60%;
+  vertical-align: top;
+  border: 1px solid #333;
+  border-radius: 5px;
+  padding: 1%;
+}
+
+.formDivider textarea {
+  height: 8em;
+  margin-bottom: 2%;
+}
+
+.addReviewForm button {
+  width: 50%;
+  background: #3397db;
+  color: white;
+  height: 3em;
+  margin: 0 auto;
+  border-radius: 5px;
+  font-size: 1.2rem;
+}
+
+/* ====================== Breakpoints ====================== */
 @media screen and (min-width: 475px) {
   nav {
     height: 50px;
