@@ -156,6 +156,34 @@ fillReviewsHTML = (reviews = self.reviews) => {
     ul.appendChild(createReviewHTML(review));
   });
   container.appendChild(ul);
+
+  const reviewForm = document.getElementById('addReview');
+  reviewForm.innerHTML = `
+    <h4>Add Your Own Review!</h4>
+    <form method="POST" id="addReviewForm">
+      <div class="formDivider">
+        <label for="name">Your name:</label>
+        <input type="text" id="name" name="user_name">  
+      </div>
+      <div class="formDivider">
+        <label for="rating">Rating: <br> (1 low, 5 high)</label>
+        <input type="number" id="rating" name="user_rating">
+      </div>
+      <div class="formDivider">
+        <label for="uReview">Comments:</label>
+        <textarea id="uReview" name="user_review" placeholder="How was this place?"></textarea>
+      </div>
+      <button type="submit">Post Review</button>
+    </form>`;
+  container.appendChild(reviewForm);
+
+  const reviewSubmit = document.getElementById('submitReview');
+  const id = getParameterByName('id');
+  const userReview = document.getElementById('addReviewForm');
+  reviewSubmit.addEventListener('click', () => {
+    e.preventDefault();
+    newReview(id, reviewForm, userReview);
+  })
 }
 
 /**
@@ -202,4 +230,25 @@ getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+newReview = (id, formDiv, data) => {
+  const review = {
+    "restaurant_id": id,
+    "name": data.user_name,
+    "rating": data.user_rating,
+    "comments": data.user_review
+  };
+  const posturl = 'http://localhost:1337/reviews/';
+
+  fetch(posturl, {
+    method: 'POST',
+    body: JSON.stringify(review)
+  })
+  .then(res => res.json())
+  .then(response => console.log('Success:', JSON.stringify(response)))
+  .then(
+    formDiv.innerHTML = `Thanks for submitting your review!`
+  )
+  .catch(error => console.error('Error:', error));
 }
