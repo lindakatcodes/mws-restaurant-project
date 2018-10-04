@@ -173,16 +173,17 @@ fillReviewsHTML = (reviews = self.reviews) => {
         <label for="uReview">Comments:</label>
         <textarea id="uReview" name="user_review" placeholder="How was this place?"></textarea>
       </div>
-      <button type="submit">Post Review</button>
+      <button type="submit" id="submitReview">Post Review</button>
     </form>`;
   container.appendChild(reviewForm);
 
   const reviewSubmit = document.getElementById('submitReview');
-  const id = getParameterByName('id');
+  const id = review.restaurant_id;
   const userReview = document.getElementById('addReviewForm');
-  reviewSubmit.addEventListener('click', () => {
-    e.preventDefault();
-    newReview(id, reviewForm, userReview);
+  reviewSubmit.addEventListener('submit', function(event) {
+    testFunction(event);
+    // e.preventDefault();
+    //newReview(id, reviewForm, userReview);
   })
 }
 
@@ -251,4 +252,8 @@ newReview = (id, formDiv, data) => {
     formDiv.innerHTML = `Thanks for submitting your review!`
   )
   .catch(error => console.error('Error:', error));
+}
+
+testFunction = (e) => {
+  console.log(e);
 }
