@@ -157,34 +157,8 @@ fillReviewsHTML = (reviews = self.reviews) => {
   });
   container.appendChild(ul);
 
-  const reviewForm = document.getElementById('addReview');
-  reviewForm.innerHTML = `
-    <h4>Add Your Own Review!</h4>
-    <form method="POST" id="addReviewForm">
-      <div class="formDivider">
-        <label for="name">Your name:</label>
-        <input type="text" id="name" name="user_name">  
-      </div>
-      <div class="formDivider">
-        <label for="rating">Rating: <br> (1 low, 5 high)</label>
-        <input type="number" id="rating" name="user_rating">
-      </div>
-      <div class="formDivider">
-        <label for="uReview">Comments:</label>
-        <textarea id="uReview" name="user_review" placeholder="How was this place?"></textarea>
-      </div>
-      <button type="submit" id="submitReview">Post Review</button>
-    </form>`;
-  container.appendChild(reviewForm);
-
-  const reviewSubmit = document.getElementById('submitReview');
-  const id = review.restaurant_id;
-  const userReview = document.getElementById('addReviewForm');
-  reviewSubmit.addEventListener('submit', function(event) {
-    testFunction(event);
-    // e.preventDefault();
-    //newReview(id, reviewForm, userReview);
-  })
+  const formHolder = formFunction(reviews[0].restaurant_id);
+  container.appendChild(formHolder);
 }
 
 /**
@@ -205,6 +179,99 @@ createReviewHTML = (review) => {
   li.appendChild(comments);
 
   return li;
+}
+
+formFunction = (rest_id) => {
+  const reviewContainer = document.getElementById('addReview');
+  const formTitle = document.createElement('h4');
+  formTitle.innerHTML = 'Add Your Own Review!';
+  reviewContainer.appendChild(formTitle);
+
+  const reviewForm = document.createElement('form');
+  reviewForm.action = 'http://localhost:1337/reviews/';
+  reviewForm.method = 'POST';
+  reviewForm.id = 'addReviewForm';
+  
+  const nameDiv = document.createElement('div');
+  nameDiv.className = 'formDivider';
+  const nameLabel = document.createElement('label');
+  nameLabel.htmlFor = 'name';
+  nameLabel.innerHTML = 'Your Name:';
+  const nameInput = document.createElement('input');
+  nameInput.type = 'text';
+  nameInput.name = 'user_name';
+  nameInput.id = 'name';
+  nameDiv.appendChild(nameLabel);
+  nameDiv.appendChild(nameInput);
+
+  reviewForm.appendChild(nameDiv);
+
+  const rateDiv = document.createElement('div');
+  rateDiv.className = 'formDivider';
+  const rateLabel = document.createElement('label');
+  rateLabel.htmlFor = 'rating';
+  rateLabel.innerHTML = 'Rating: <br> (1 low, 5 high)';
+  const rateInput = document.createElement('input');
+  rateInput.type = 'number';
+  rateInput.name = 'user_rating';
+  rateInput.id = 'rating';
+  rateDiv.appendChild(rateLabel);
+  rateDiv.appendChild(rateInput);
+
+  reviewForm.appendChild(rateDiv);
+
+  const commentDiv = document.createElement('div');
+  commentDiv.className = 'formDivider';
+  const commentLabel = document.createElement('label');
+  commentLabel.htmlFor = 'uReview';
+  commentLabel.innerHTML = 'Comments:';
+  const commentInput = document.createElement('textarea');
+  commentInput.name = 'user_review';
+  commentInput.id = 'uReview';
+  commentInput.placeholder = 'How was this place?';
+  commentDiv.appendChild(commentLabel);
+  commentDiv.appendChild(commentInput);
+
+  reviewForm.appendChild(commentDiv);
+  
+  const reviewSubmit = document.createElement('button');
+  reviewSubmit.type = 'submit';
+  reviewSubmit.id = 'submitReview';
+  reviewSubmit.innerHTML = 'Post Review';
+
+  reviewForm.appendChild(reviewSubmit);
+
+  reviewContainer.appendChild(reviewForm);
+  
+  const restaurantId = rest_id;
+
+  reviewSubmit.addEventListener('submit', function(event) {
+    event.preventDefault();
+    newReview(restaurantId, reviewContainer, reviewForm);
+  })
+
+  return reviewContainer;
+}
+
+newReview = (id, formDiv, data) => {
+  const review = {
+    "restaurant_id": id,
+    "name": data.user_name,
+    "rating": data.user_rating,
+    "comments": data.user_review
+  };
+  const posturl = 'http://localhost:1337/reviews/';
+
+  fetch(posturl, {
+    method: 'POST',
+    body: JSON.stringify(review)
+  })
+  .then(res => res.json())
+  .then(response => console.log('Success:', response))
+  .then(
+    formDiv.innerHTML = `Thanks for submitting your review!`
+  )
+  .catch(error => console.error('Error:', error));
 }
 
 /**
@@ -233,27 +300,3 @@ getParameterByName = (name, url) => {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-newReview = (id, formDiv, data) => {
-  const review = {
-    "restaurant_id": id,
-    "name": data.user_name,
-    "rating": data.user_rating,
-    "comments": data.user_review
-  };
-  const posturl = 'http://localhost:1337/reviews/';
-
-  fetch(posturl, {
-    method: 'POST',
-    body: JSON.stringify(review)
-  })
-  .then(res => res.json())
-  .then(response => console.log('Success:', JSON.stringify(response)))
-  .then(
-    formDiv.innerHTML = `Thanks for submitting your review!`
-  )
-  .catch(error => console.error('Error:', error));
-}
-
-testFunction = (e) => {
-  console.log(e);
-}
