@@ -3,10 +3,18 @@
  */
 
  // First - open our db, or initialize if it's the first time
- const dbPromise = idb.open('restaurantReviewSite', 2, function (upgradeDb) {
-  upgradeDb.createObjectStore('storeInfo', {
-    keypath: 'id'
-  });
+const dbPromise = idb.open('restaurantReviewSite', 3, function (upgradeDb) {
+  switch(upgradeDb.oldVersion) {
+    case 0:
+    case 1:
+      upgradeDb.createObjectStore('storeInfo', {
+        keypath: 'id'
+      })
+    case 2:
+      upgradeDb.createObjectStore('reviews', {
+        keypath: 'id'
+      })
+  };
 });
 
 class DBHelper {
@@ -78,7 +86,16 @@ class DBHelper {
       }
     })
     .catch(function () { // then, if the fetch fails, we call our db and check there
-      console.log(`Didn't call fetch`);
+      console.log(`Looks like you're offline - pulling cached reviews for you now`);
+      dbPromise.then(function(db) {
+        const tx = db.transaction('reviews', 'readwrite');
+        const store = tx.objectStore('reviews');
+        return store.getAll();
+      })
+      .then(function(response) {
+        const reviews = response;
+        callback(null, reviews);
+      })
     });
   }
 

@@ -21,7 +21,13 @@ self.addEventListener('install', function(event) {
                 '/img/optimized/7-optimized.jpg',
                 '/img/optimized/8-optimized.jpg',
                 '/img/optimized/9-optimized.jpg',
-                '/img/optimized/10-optimized.jpg'
+                '/img/optimized/10-optimized.jpg',
+                '/img/icons/fav_off.svg',
+                '/img/icons/fav_on.svg',
+                '/img/icons/favicon-16x16.png',
+                '/img/icons/favicon-32x32.png',
+                '/img/icons/icon-192x192.png',
+                '/img/icons/icon-512x512.png'
             ]);
         })
     );

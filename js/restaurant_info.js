@@ -144,7 +144,7 @@ fillReviewsHTML = (reviews = self.reviews) => {
   title.innerHTML = 'Reviews';
   container.appendChild(title);
   container.setAttribute('aria-label', 'Reviews');
-
+  
   if (!reviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
@@ -188,8 +188,6 @@ formFunction = (rest_id) => {
   reviewContainer.appendChild(formTitle);
 
   const reviewForm = document.createElement('form');
-  reviewForm.action = 'http://localhost:1337/reviews/';
-  reviewForm.method = 'POST';
   reviewForm.id = 'addReviewForm';
   
   const nameDiv = document.createElement('div');
@@ -245,7 +243,7 @@ formFunction = (rest_id) => {
   
   const restaurantId = rest_id;
 
-  reviewSubmit.addEventListener('submit', function(event) {
+  reviewForm.addEventListener('submit', function(event) {
     event.preventDefault();
     newReview(restaurantId, reviewContainer, reviewForm);
   })
@@ -256,9 +254,9 @@ formFunction = (rest_id) => {
 newReview = (id, formDiv, data) => {
   const review = {
     "restaurant_id": id,
-    "name": data.user_name,
-    "rating": data.user_rating,
-    "comments": data.user_review
+    "name": data.user_name.value,
+    "rating": parseInt(data.user_rating.value, 10),
+    "comments": data.user_review.value
   };
   const posturl = 'http://localhost:1337/reviews/';
 
