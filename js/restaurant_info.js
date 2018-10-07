@@ -1,4 +1,5 @@
 let restaurant;
+let reviews;
 var newMap;
 
 /**
@@ -6,6 +7,7 @@ var newMap;
  */
 document.addEventListener('DOMContentLoaded', (event) => {  
   initMap();
+  
 });
 
 /**
@@ -63,6 +65,9 @@ fetchRestaurantFromURL = (callback) => {
         console.error(error);
         return;
       }
+      if (Object.keys(reviews).length == 0) {
+        return;
+      }
       fillReviewsHTML();
       callback(null, reviews);
     });
@@ -111,8 +116,6 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  // fillReviewsHTML();
 }
 
 /**
@@ -144,7 +147,7 @@ fillReviewsHTML = (reviews = self.reviews) => {
   title.innerHTML = 'Reviews';
   container.appendChild(title);
   container.setAttribute('aria-label', 'Reviews');
-  
+
   if (!reviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
@@ -240,12 +243,10 @@ formFunction = (rest_id) => {
   reviewForm.appendChild(reviewSubmit);
 
   reviewContainer.appendChild(reviewForm);
-  
-  const restaurantId = rest_id;
 
   reviewForm.addEventListener('submit', function(event) {
     event.preventDefault();
-    newReview(restaurantId, reviewContainer, reviewForm);
+    newReview(rest_id, reviewContainer, reviewForm);
   })
 
   return reviewContainer;
