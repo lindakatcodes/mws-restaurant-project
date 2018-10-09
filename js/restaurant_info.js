@@ -266,7 +266,9 @@ newReview = (id, formDiv, data) => {
     body: JSON.stringify(review)
   })
   .then(res => res.json())
-  .then(response => console.log('Success:', response))
+  .then(
+    response => console.log('Success:', response)
+  )
   .then(
     formDiv.innerHTML = `Thanks for submitting your review!`
   )

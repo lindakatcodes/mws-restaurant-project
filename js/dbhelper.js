@@ -3,7 +3,7 @@
  */
 
  // First - open our db, or initialize if it's the first time
-const dbPromise = idb.open('restaurantReviewSite', 3, function (upgradeDb) {
+const dbPromise = idb.open('restaurantReviewSite', 4, function (upgradeDb) {
   switch(upgradeDb.oldVersion) {
     case 0:
     case 1:
@@ -14,6 +14,9 @@ const dbPromise = idb.open('restaurantReviewSite', 3, function (upgradeDb) {
       upgradeDb.createObjectStore('reviews', {
         keypath: 'id'
       })
+    case 3:
+      var newIndex = upgradeDb.transaction.objectStore('reviews');
+      newIndex.createIndex('rest_ID', 'restaurant_id');
   };
 });
 
@@ -79,6 +82,17 @@ class DBHelper {
     .then(function (response) {
       if (response) {
         const reviews = response;
+        reviews.forEach(review => {
+          dbPromise.then(async db => { 
+            const tx = db.transaction('reviews', 'readwrite');
+            const store = tx.objectStore('reviews');
+            const request = await store.get(review.id);
+            if (!request) {
+              console.log('new review found! adding to cache');
+              store.add(review, review.id);
+            }
+          });
+        });
         callback(null, reviews);
       } else { // otherwise, there's no data and an error is thrown - data doesn't exist at all, even if online
         const error = (`Request failed: ${response.status} - ${response.statusText}`);
@@ -90,7 +104,8 @@ class DBHelper {
       dbPromise.then(function(db) {
         const tx = db.transaction('reviews', 'readwrite');
         const store = tx.objectStore('reviews');
-        return store.getAll();
+        const restIdIndex = store.index('rest_ID');
+        return restIdIndex.getAll(id);
       })
       .then(function(response) {
         const reviews = response;
