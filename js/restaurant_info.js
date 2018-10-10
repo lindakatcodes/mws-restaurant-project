@@ -253,6 +253,7 @@ formFunction = (rest_id) => {
 }
 
 newReview = (id, formDiv, data) => {
+  //build the review, per the server's specifications
   const review = {
     "restaurant_id": id,
     "name": data.user_name.value,
@@ -261,18 +262,32 @@ newReview = (id, formDiv, data) => {
   };
   const posturl = 'http://localhost:1337/reviews/';
 
+  // try to post the review to the server
   fetch(posturl, {
     method: 'POST',
     body: JSON.stringify(review)
   })
   .then(res => res.json())
   .then(
-    response => console.log('Success:', response)
-  )
-  .then(
-    formDiv.innerHTML = `Thanks for submitting your review!`
-  )
-  .catch(error => console.error('Error:', error));
+    // if response code is good - success! add new review to main db & reload reviews
+    (res) => {
+      console.log('Success! Your review has been received. Response: ', res);
+      DBHelper.stashReview('online', res);
+      updateFormDiv(formDiv);
+    })
+  // if fetch didn't work, store the new review in the temp db and reload reviews
+  .catch(error => {
+    console.error('Sorry, fetch failed! Storing review offline. Error code: ', error);
+    DBHelper.stashReview('offline', review);  
+    updateFormDiv(formDiv);
+  })
+}
+
+updateFormDiv = (formDiv) => {
+  formDiv.innerHTML = `
+    <p> Thanks for adding your review! Reload the page to see your review live! </p>
+    <button class='reloadBtn'><a href=" ${window.location.href} "> Reload now? </a></button>
+  `
 }
 
 /**

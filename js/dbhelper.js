@@ -3,7 +3,7 @@
  */
 
  // First - open our db, or initialize if it's the first time
-const dbPromise = idb.open('restaurantReviewSite', 4, function (upgradeDb) {
+const dbPromise = idb.open('restaurantReviewSite', 5, function (upgradeDb) {
   switch(upgradeDb.oldVersion) {
     case 0:
     case 1:
@@ -17,6 +17,10 @@ const dbPromise = idb.open('restaurantReviewSite', 4, function (upgradeDb) {
     case 3:
       var newIndex = upgradeDb.transaction.objectStore('reviews');
       newIndex.createIndex('rest_ID', 'restaurant_id');
+    case 4:
+      upgradeDb.createObjectStore('tempStorage', {
+        keypath: 'id'
+      })
   };
 });
 
@@ -285,6 +289,27 @@ class DBHelper {
       DBHelper.favStatus('false', id);
       on.classList.toggle('hide');
       off.classList.toggle('hide');
+    }
+  }
+
+  static stashReview(status, review) {
+    // if user is online, add review to main db
+    if (status === 'online') {
+      dbPromise.then(db => { 
+        const tx = db.transaction('reviews', 'readwrite');
+        const store = tx.objectStore('reviews');
+        const addReviewToMain = store.add(review, review.id);
+        return tx.complete;
+      });
+    }
+    // if user is offline, add review to temp db
+    if (status === 'offline') {
+      dbPromise.then(db => { 
+        const tx = db.transaction('tempStorage', 'readwrite');
+        const store = tx.objectStore('tempStorage');
+        const addReviewToTemp = store.add(review, review.id);
+        return tx.complete;
+      });
     }
   }
 
