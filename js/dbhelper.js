@@ -109,10 +109,13 @@ class DBHelper {
         const tx = db.transaction('reviews', 'readwrite');
         const store = tx.objectStore('reviews');
         const restIdIndex = store.index('rest_ID');
-        return restIdIndex.getAll(id);
+        const temp = restIdIndex.getAll(id);
+        console.log('reviews from storage by restId: ' + temp);
+        return temp;
       })
       .then(function(response) {
         const reviews = response;
+        console.log('catch response: ' + reviews);
         callback(null, reviews);
       })
     });
