@@ -154,12 +154,15 @@ createRestaurantHTML = (restaurant) => {
 
   const fav = document.createElement('button');
   fav.className = ('favButton');
+  fav.setAttribute('aria-label', `Toggle this restaurant's favorite status`);
   const favOn = document.createElement('img'); 
   favOn.src = `./img/icons/fav_on.svg`;
   favOn.className = 'favorite on';
+  favOn.alt = 'Favorite restaurant toggle turned on';
   const favOff = document.createElement('img');
   favOff.src = `./img/icons/fav_off.svg`;
   favOff.className = 'favorite off';
+  favOff.alt = 'Favorite restaurant toggle turned off';
   if (restaurant.is_favorite == 'true') {
     favOff.classList.add('hide');
   }

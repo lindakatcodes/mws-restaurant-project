@@ -96,15 +96,18 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const favOn = document.createElement('img'); 
   favOn.src = `./img/icons/fav_on.svg`;
   favOn.className = 'favorite on';
+  favOn.alt = 'Favorite restaurant toggle turned on';
   const favOff = document.createElement('img');
   favOff.src = `./img/icons/fav_off.svg`;
   favOff.className = 'favorite off';
+  favOff.alt = 'Favorite restaurant toggle turned off';
    if (restaurant.is_favorite == 'false') {
     favOn.classList.add('hide');
   } else if (restaurant.is_favorite == 'true') {
     favOff.classList.add('hide');
   }
   const favButton = document.getElementById('fav');
+  favButton.setAttribute('aria-label', `Toggle this restaurant's favorite status`);
   favButton.append(favOn, favOff);
   
   favButton.addEventListener('click', function(e) {

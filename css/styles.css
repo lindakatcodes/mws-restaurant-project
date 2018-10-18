@@ -5,32 +5,40 @@
   box-sizing: border-box;
 }
 
+:root {
+  --orange: #FF8C00;
+  --blue: #1460AA;
+  --offwhite: #DADFE1;
+  --darkgray: #2B2B2B;
+  --lightgray: #bebebe;
+}
+
 body,td,th,p{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12pt;
-	color: #333;
+	color: var(--darkgray);
 	line-height: 1.5;
 }
 body {
-	background-color: #fdfdfd;
+	background-color: var(--offwhite);
 	margin: 0;
 	position: relative;
 }
 ul, li {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10pt;
-	color: #333;
+	color: var(--darkgray);
 }
 a {
-	color: orange;
+	color: var(--orange);
 	text-decoration: none;
 }
 a:hover, a:focus {
-	color: #3397db;
+	color: var(--blue);
 	text-decoration: none;
 }
 a img{
-	border: none 0px #fff;
+	border: none 0px var(--offwhite);
 }
 h1, h2, h3, h4, h5, h6 {
   font-family: Arial, Helvetica, sans-serif;
@@ -40,13 +48,13 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 	display: block;
 }
 #maincontent {
-  background-color: #f3f3f3;
+  background-color: var(--offwhite);
   min-height: 100%;
   min-width: 100%;
 }
 #footer {
-  background-color: #444;
-  color: #e0e0e0;
+  background-color: var(--darkgray);
+  color: var(--offwhite);
   font-size: 0.8em;
   letter-spacing: 1px;
   padding: 4% 13%;
@@ -55,14 +63,14 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   max-width: 100%;
 }
 #footer a:focus {
-  outline: 2px solid orange;
+  outline: 2px solid var(--orange);
   padding: 2px;
 }
 /* ====================== Navigation ====================== */
 nav {
   width: 100%;
   height: 80px;
-  background-color: #252831;
+  background-color: var(--darkgray);
   text-align: center;
 }
 nav h1 {
@@ -70,20 +78,20 @@ nav h1 {
   padding-top: 1.5%;
 }
 nav h1 a {
-  color: #fff;
+  color: var(--offwhite);
   font-size: 16pt;
   font-weight: 200;
   letter-spacing: 10px;
   text-transform: uppercase;
 }
 nav h1 a:focus {
-  outline: 3px solid orange;
+  outline: 3px solid var(--orange);
   padding: 2px 4px;
 }
 #breadcrumb {
     padding: 10px 20px 16px;
     list-style: none;
-    background-color: #f3f3f3;
+    background-color: var(--lightgray);
     margin: 0;
     width: 100%;
 }
@@ -97,28 +105,28 @@ nav h1 a:focus {
 /* Add a slash symbol (/) before/behind each list item */
 #breadcrumb li+li:before {
     padding: 8px;
-    color: black;
+    color: var(--darkgray);
     content: "/\00a0";
 }
 
 /* Add a color to all links inside the list */
 #breadcrumb li a {
-    color: #0275d8;
+    color: var(--blue);
     text-decoration: none;
 }
 
 /* Add a color on mouse-over */
 #breadcrumb li a:hover {
-    color: orange;
+    color: var(--orange);
     text-decoration: underline;
 }
 #breadcrumb li a:focus {
-  outline: 2px solid orange;
+  outline: 2px solid var(--orange);
   padding: 2px;
 }
 /* ====================== Map ====================== */
 #map-container {
-  background: blue none repeat scroll 0 0;
+  background: var(--blue) none repeat scroll 0 0;
   width: 100%;
   min-height: 350px;
   height: 60%;
@@ -127,16 +135,16 @@ nav h1 a:focus {
   height: 100%;
   min-height: 350px;
   width: 100%;
-  background-color: #ccc;
+  background-color: var(--offwhite);
 }
 /* ====================== Restaurant Filtering ====================== */
 .filter-options {
   width: 100%;
   height: 35%;
-  background-color: #3397DB;
+  background-color: var(--blue);
 }
 .filter-options h2 {
-  color: white;
+  color: var(--offwhite);
   font-size: 1.7em;
   font-weight: normal;
   line-height: 1;
@@ -145,8 +153,8 @@ nav h1 a:focus {
   text-align: center;
 }
 .filter-options select {
-  background-color: white;
-  border: 1px solid #fff;
+  background-color: var(--offwhite);
+  border: 1px solid var(--offwhite);
   font-family: Arial,sans-serif;
   font-size: 1em;
   height: 50px;
@@ -157,20 +165,20 @@ nav h1 a:focus {
 }
 #neighborhoods-select:focus, 
 #cuisines-select:focus {
-  outline: 4px solid orange;
+  outline: 4px solid var(--orange);
 }
 
 /* ====================== Restaurant Listing ====================== */
 #restaurants-list {
-  background-color: #f3f3f3;
+  background-color: var(--lightgray);
   list-style: outside none none;
   margin: 0;
   padding: 30px 15px 60px;
   text-align: center;
 }
 #restaurants-list li {
-  background-color: #fff;
-  border: 2px solid #ccc;
+  background-color: var(--offwhite);
+  border: 2px solid var(--offwhite);
   font-family: Arial,sans-serif;
   margin: 2% auto 4%;
   min-height: 380px;
@@ -180,7 +188,7 @@ nav h1 a:focus {
 }
 
 #restaurants-list .restaurant-img {
-  background-color: #ccc;
+  background-color: var(--offwhite);
   display: block;
   margin-top: 0.5rem;
   max-width: 100%;
@@ -188,7 +196,7 @@ nav h1 a:focus {
   min-height: 200px;
 }
 #restaurants-list li h3 {
-  color: #f18200;
+  color: var(--orange);
   font-family: Arial,sans-serif;
   font-size: 1.7em;
   font-weight: 300;
@@ -224,8 +232,8 @@ nav h1 a:focus {
   font-size: 1.3em;
 }
 #restaurants-list li a {
-  background-color: orange;
-  color: #333;
+  background-color: var(--orange);
+  color: var(--darkgray);
   display: inline-block;
   font-size: 1.4em;
   margin: 15px 0 0;
@@ -233,15 +241,16 @@ nav h1 a:focus {
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
-  box-shadow: 3px 3px 3px #444;
+  box-shadow: 3px 3px 3px var(--darkgray);
   transition: all 0.3s ease-in-out;
 }
 
 #restaurants-list li a:focus,
 #restaurants-list li a:hover {
-  background-color: #3397db;
+  background-color: var(--blue);
+  color: var(--offwhite);
   outline: 0;
-  box-shadow: 6px 6px 5px #444;
+  box-shadow: 6px 6px 5px var(--darkgray);
 }
 
 /* ====================== Restaurant Details ====================== */
@@ -260,12 +269,12 @@ nav h1 a:focus {
 }
 
 .inside #map-container {
-  background: blue none repeat scroll 0 0;
+  background: var(--blue) none repeat scroll 0 0;
   width: 90%;
   min-height: 350px;
 }
 .inside #map {
-  background-color: #ccc;
+  background-color: var(--offwhite);
   height: 100%;
   width: 100%;
   min-height: 350px;
@@ -276,7 +285,7 @@ nav h1 a:focus {
   width: 100%;
 }
 #restaurant-name {
-  color: #f18200;
+  color: var(--orange);
   font-family: Arial,sans-serif;
   font-size: 2.6em;
   font-weight: 300;
@@ -298,8 +307,8 @@ nav h1 a:focus {
   text-align: center;
 }
 #restaurant-cuisine {
-  background-color: #333;
-  color: #ddd;
+  background-color: var(--darkgray);
+  color: var(--offwhite);
   font-size: 1.7em;
   font-weight: 300;
   letter-spacing: 10px;
@@ -310,10 +319,10 @@ nav h1 a:focus {
 	width: 100%;
 }
 #restaurant-hours td {
-  color: #666;
+  color: var(--darkgray);
   font-size: 1.3em;
   padding: 1% 2%;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--darkgray);
 }
 #restaurant-hours {
   width: 80%;
@@ -331,7 +340,7 @@ nav h1 a:focus {
   padding: 30px 0 80px;
 }
 #reviews-container h3 {
-  color: #f58500;
+  color: var(--orange);
   font-size: 2.3em;
   font-weight: 300;
   letter-spacing: -1px;
@@ -343,8 +352,8 @@ nav h1 a:focus {
   padding: 0;
 }
 #reviews-list li {
-  background-color: #fff;
-  border: 2px solid #f3f3f3;
+  background-color: var(--offwhite);
+  border: 2px solid var(--orange);
   display: block;
   list-style-type: none;
   margin: 0 5% 5%;
@@ -359,7 +368,9 @@ nav h1 a:focus {
 
 /* ====================== Add Review Form ====================== */
 #addReview {
-  border: 1px solid #333;
+  background-color: var(--lightgray);
+  color: var(--darkgray);
+  border: 3px solid var(--blue);
   width: 85%;
   margin: 0 auto;
   padding: 2% 0 4% 0;
@@ -367,6 +378,7 @@ nav h1 a:focus {
 
 #addReview h4 {
   text-align: center;
+  color: var(--blue);
 }
 
 .addReviewForm {
@@ -389,7 +401,7 @@ nav h1 a:focus {
 .formDivider input {
   width: 60%;
   vertical-align: top;
-  border: 1px solid #333;
+  border: 1px solid var(--darkgray);
   border-radius: 5px;
   padding: 1%;
 }
@@ -398,16 +410,26 @@ nav h1 a:focus {
   width: 60%;
   height: 8em;
   margin-bottom: 2%;
+  border: 1px solid var(--darkgray);
 }
 
 #submitReview {
   width: 40%;
-  background: #3397db;
-  color: white;
+  background: var(--blue);
+  color: var(--offwhite);
   height: 3em;
   margin: 0 25% 0 35%;
   border-radius: 5px;
   font-size: 1.2rem;
+  border: 2px solid var(--offwhite);
+  box-shadow: 3px 3px 3px var(--darkgray);
+  transition: all 0.3s ease-in-out;
+}
+
+#submitReview:hover {
+  background-color: var(--orange);
+  color: var(--darkgray);
+  box-shadow: 6px 6px 5px var(--darkgray);
 }
 
 /* ====================== Breakpoints ====================== */
@@ -561,7 +583,7 @@ nav h1 a:focus {
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
-    background-color: #f3f3f3;
+    background-color: var(--offwhite);
   }
 
   header {
