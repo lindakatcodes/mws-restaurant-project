@@ -60,12 +60,15 @@ fetchRestaurantFromURL = (callback) => {
       callback(null, restaurant)
     });
     DBHelper.fetchReviewsById(id, (error, reviews) => {
+      console.log(`called fetchReviewsById, answer returned: ${JSON.stringify(reviews)}`);
       self.reviews = reviews;
       if (!reviews) {
         console.error(error);
+        console.log('no reviews found from fetch')
         return;
       }
       if (Object.keys(reviews).length == 0) {
+        console.log('function got called more than once');
         return;
       }
       fillReviewsHTML();
@@ -145,6 +148,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.reviews) => {
+  console.log('inside fillReviewsHTML function');
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';

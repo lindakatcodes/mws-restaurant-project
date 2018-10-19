@@ -2,9 +2,9 @@
  * Common database helper functions.
  */
 
- // First - open our db, or initialize if it's the first time
+// First - open our db, or initialize if it's the first time
 const dbPromise = idb.open('restaurantReviewSite', 5, function (upgradeDb) {
-  switch(upgradeDb.oldVersion) {
+  switch (upgradeDb.oldVersion) {
     case 0:
     case 1:
       upgradeDb.createObjectStore('storeInfo', {
@@ -41,84 +41,87 @@ class DBHelper {
   static fetchRestaurants(callback) {
     // First - try to fetch the data from the server
     fetch(`${DBHelper.DATABASE_URL}restaurants`)
-    .then(response => response.json()) // parse the server response
-    .then(function (response) {
-      if (response) { // if we got a response, set the restaurants value to that and add to idb if not there
-        const restaurants = response;
-        restaurants.forEach(restaurant => {
-          dbPromise.then(async db => { // start a separate transaction for each restaurant, to see if it's in db
-            const tx = db.transaction('storeInfo', 'readwrite');
-            const store = tx.objectStore('storeInfo');
-            // try to get restaurant by id - if it's there, just say it's there - if not, add to db
-            const request = await store.get(restaurant.id);
-            if (!request) {
-              console.log('store is not in db, adding now');
-              store.add(restaurant, restaurant.id);
-            }
+      .then(response => response.json()) // parse the server response
+      .then(function (response) {
+        if (response) { // if we got a response, set the restaurants value to that and add to idb if not there
+          const restaurants = response;
+          restaurants.forEach(restaurant => {
+            dbPromise.then(async db => { // start a separate transaction for each restaurant, to see if it's in db
+              const tx = db.transaction('storeInfo', 'readwrite');
+              const store = tx.objectStore('storeInfo');
+              // try to get restaurant by id - if it's there, just say it's there - if not, add to db
+              const request = await store.get(restaurant.id);
+              if (!request) {
+                console.log('store is not in db, adding now');
+                store.add(restaurant, restaurant.id);
+              }
+            });
           });
-        });
-        callback(null, restaurants);
-      } else { // otherwise, there's no data and an error is thrown - data doesn't exist at all, even if online
-        const error = (`Request failed: ${response.status} - ${response.statusText}`);
-        callback(error, null);
-      }
-    })
-    .catch(function () { // then, if the fetch fails, we call our db and check there
-      console.log(`Sorry, your internet doesn't seem to be working. Pulling cached data for you now!`);
+          callback(null, restaurants);
+        } else { // otherwise, there's no data and an error is thrown - data doesn't exist at all, even if online
+          const error = (`Request failed: ${response.status} - ${response.statusText}`);
+          callback(error, null);
+        }
+      })
+      .catch(function () { // then, if the fetch fails, we call our db and check there
+        console.log(`Sorry, your internet doesn't seem to be working. Pulling cached data for you now!`);
 
-      dbPromise.then(function(db) {
-        const tx = db.transaction('storeInfo', 'readwrite');
-        const store = tx.objectStore('storeInfo');
-        return store.getAll();
-      })
-      .then(function(response) {
-        const restaurants = response;
-        callback(null, restaurants);
-      })
-    });
+        dbPromise.then(function (db) {
+          const tx = db.transaction('storeInfo', 'readwrite');
+          const store = tx.objectStore('storeInfo');
+          return store.getAll();
+        })
+          .then(function (response) {
+            const restaurants = response;
+            callback(null, restaurants);
+          })
+      });
   }
 
   static fetchReviewsById(id, callback) {
     // First - try to fetch the data from the server
-    const reviewURL = `${DBHelper.DATABASE_URL}reviews/?restaurant_id=${id}`; 
+    console.log('inside fetchReviewsById');
+    const reviewURL = `${DBHelper.DATABASE_URL}reviews/?restaurant_id=${id}`;
     fetch(reviewURL)
-    .then(response => response.json()) // parse the server response
-    .then(function (response) {
-      if (response) {
-        const reviews = response;
-        reviews.forEach(review => {
-          dbPromise.then(async db => { 
-            const tx = db.transaction('reviews', 'readwrite');
-            const store = tx.objectStore('reviews');
-            const request = await store.get(review.id);
-            if (!request) {
-              console.log('new review found! adding to cache');
-              store.add(review, review.id);
-            }
+      .then(response => response.json()) // parse the server response
+      .then(function (response) {
+        if (response) {
+          console.log('fetch worked - dealing with response now');
+          const reviews = response;
+          reviews.forEach(review => {
+            dbPromise.then(async db => {
+              const tx = db.transaction('reviews', 'readwrite');
+              const store = tx.objectStore('reviews');
+              const request = await store.get(review.id);
+              if (!request) {
+                console.log('new review found! adding to cache');
+                store.add(review, review.id);
+              }
+            });
           });
-        });
-        callback(null, reviews);
-      } else { // otherwise, there's no data and an error is thrown - data doesn't exist at all, even if online
-        const error = (`Request failed: ${response.status} - ${response.statusText}`);
-        callback(error, null);
-      }
-    })
-    .catch(function () { // then, if the fetch fails, we call our db and check there
-      console.log(`Looks like you're offline - pulling cached reviews for you now`);
-      dbPromise.then(function(db) {
-        const tx = db.transaction('reviews', 'readwrite');
-        const store = tx.objectStore('reviews');
-        const restIdIndex = store.index('rest_ID');
-        const temp = restIdIndex.getAll(id);
-        console.log('reviews from storage by restId: ' + temp);
-        return temp;
+          callback(null, reviews);
+        } else { // otherwise, there's no data and an error is thrown - data doesn't exist at all, even if online
+          console.log('fetch worked, but there was not any data');
+          const error = (`Request failed: ${response.status} - ${response.statusText}`);
+          callback(error, null);
+        }
       })
-      .then(function(response) {
-        const reviews = response;
-        console.log('catch response: ' + reviews);
-        callback(null, reviews);
-      })
-    });
+      .catch(function () { // then, if the fetch fails, we call our db and check there
+        console.log(`inside the catch function of fetchReviewsById`);
+        dbPromise.then(function (db) {
+          const tx = db.transaction('reviews', 'readwrite');
+          const store = tx.objectStore('reviews');
+          const restIdIndex = store.index('rest_ID');
+          const temp = restIdIndex.getAll(id);
+          console.log(`reviews grabbed by id: ${JSON.stringify(temp)}`);
+          return temp;
+        })
+          .then(function (stashedReviews) {
+            console.log(`here's the reviews that exist in idb: ${JSON.stringify(stashedReviews)}`);
+            const reviews = stashedReviews;
+            callback(null, reviews);
+          })
+      });
   }
 
   /**
@@ -263,7 +266,7 @@ class DBHelper {
     dbPromise.then(async db => {
       const tx = db.transaction('storeInfo', 'readwrite');
       const store = tx.objectStore('storeInfo');
-      
+
       const req = await store.get(id);
       const currStore = req;
       currStore.is_favorite = status;
@@ -273,9 +276,9 @@ class DBHelper {
       store.put(currStore, id);
       return tx.complete;
     })
-    .then(function() {
-      console.log('transaction complete!');
-    })
+      .then(function () {
+        console.log('transaction complete!');
+      })
   }
 
   static toggleFav(button, id) {
@@ -298,7 +301,7 @@ class DBHelper {
   static stashReview(status, review) {
     // if user is online, add review to main db
     if (status === 'online') {
-      dbPromise.then(db => { 
+      dbPromise.then(db => {
         const tx = db.transaction('reviews', 'readwrite');
         const store = tx.objectStore('reviews');
         const addReviewToMain = store.add(review, review.id);
@@ -307,7 +310,7 @@ class DBHelper {
     }
     // if user is offline, add review to temp db
     if (status === 'offline') {
-      dbPromise.then(db => { 
+      dbPromise.then(db => {
         const tx = db.transaction('tempStorage', 'readwrite');
         const store = tx.objectStore('tempStorage');
         const addReviewToTemp = store.add(review, review.id);

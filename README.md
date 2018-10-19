@@ -1,5 +1,10 @@
 # Mobile Web Specialist Certification Course
 ---
+
+To run my version of the project - install all the dependencies with 'npm install', then run 'gulp start'. That will trigger gulp to compile all the files and start browserify, which will automatically launch a browser window pointing to localhost. 
+
+The main JS files are all saved in the js folder. Saving in any of those files while the gulp start task is running will trigger an automatic recompiling of the files, and a refresh of the browser page should show the changes. (Ideally browserify should auto-reload the page, but sometimes it doesn't.) Same goes for the CSS file or either of the HTML files.
+
 #### _Three Stage Course Material Project - Restaurant Reviews_
 
 For the **Restaurant Reviews** projects, you will incrementally convert a static webpage to a mobile-ready web application.
