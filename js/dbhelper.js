@@ -19,7 +19,8 @@ const dbPromise = idb.open('restaurantReviewSite', 5, function (upgradeDb) {
       newIndex.createIndex('rest_ID', 'restaurant_id');
     case 4:
       upgradeDb.createObjectStore('tempStorage', {
-        keypath: 'id'
+        keypath: 'id',
+        autoIncrement: true
       })
   };
 });
@@ -112,12 +113,10 @@ class DBHelper {
           const tx = db.transaction('reviews', 'readwrite');
           const store = tx.objectStore('reviews');
           const restIdIndex = store.index('rest_ID');
-          const temp = restIdIndex.getAll(id);
-          console.log(`reviews grabbed by id: ${JSON.stringify(temp)}`);
+          const temp = restIdIndex.getAll(parseInt(id, 10));
           return temp;
         })
           .then(function (stashedReviews) {
-            console.log(`here's the reviews that exist in idb: ${JSON.stringify(stashedReviews)}`);
             const reviews = stashedReviews;
             callback(null, reviews);
           })
@@ -300,6 +299,7 @@ class DBHelper {
 
   static stashReview(status, review) {
     // if user is online, add review to main db
+    console.log(`in stashReview - here's the review we're saving: ${review}`);
     if (status === 'online') {
       dbPromise.then(db => {
         const tx = db.transaction('reviews', 'readwrite');

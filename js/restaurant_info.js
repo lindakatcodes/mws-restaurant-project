@@ -60,19 +60,13 @@ fetchRestaurantFromURL = (callback) => {
       callback(null, restaurant)
     });
     DBHelper.fetchReviewsById(id, (error, reviews) => {
-      console.log(`called fetchReviewsById, answer returned: ${JSON.stringify(reviews)}`);
       self.reviews = reviews;
       if (!reviews) {
         console.error(error);
         console.log('no reviews found from fetch')
         return;
       }
-      if (Object.keys(reviews).length == 0) {
-        console.log('function got called more than once');
-        return;
-      }
-      fillReviewsHTML();
-      callback(null, reviews);
+      fillReviewsHTML(reviews);
     });
   }
 }
@@ -155,7 +149,7 @@ fillReviewsHTML = (reviews = self.reviews) => {
   container.appendChild(title);
   container.setAttribute('aria-label', 'Reviews');
 
-  if (!reviews) {
+  if (!reviews || Object.keys(reviews).length == 0) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
     container.appendChild(noReviews);
