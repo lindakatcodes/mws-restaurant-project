@@ -82,6 +82,37 @@ class DBHelper {
   static fetchReviewsById(id, callback) {
     // First - try to fetch the data from the server
     console.log('inside fetchReviewsById');
+
+    // check temp storage to see if there's any reviews in there - if so, add to server
+    dbPromise.then(function (db) {
+      const tx = db.transaction('tempStorage', 'readwrite');
+      const store = tx.objectStore('tempStorage');
+      return store.openCursor();
+    })
+      .then(function cycleItems(cursor) {
+        if (!cursor) return;
+        if (cursor.value.type === 'review') {
+
+          // set up review as requested in server options
+          const review = {
+            "restaurant_id": cursor.value.restaurant_id,
+            "name": cursor.value.name,
+            "rating": parseInt(cursor.value.rating, 10),
+            "comments": cursor.value.comments
+          }
+
+          fetch('http://localhost:1337/reviews/', {
+            method: 'POST',
+            body: JSON.stringify(review)
+          })
+          .then(() => {
+            cursor.delete();
+          })
+        }
+        return cursor.continue().then(cycleItems);
+      })
+
+
     const reviewURL = `${DBHelper.DATABASE_URL}reviews/?restaurant_id=${id}`;
     fetch(reviewURL)
       .then(response => response.json()) // parse the server response
@@ -106,6 +137,9 @@ class DBHelper {
           const error = (`Request failed: ${response.status} - ${response.statusText}`);
           callback(error, null);
         }
+      })
+      .then(() => {
+
       })
       .catch(function () { // then, if the fetch fails, we call our db and check there
         console.log(`inside the catch function of fetchReviewsById`);
@@ -269,15 +303,32 @@ class DBHelper {
       const req = await store.get(id);
       const currStore = req;
       currStore.is_favorite = status;
+
       fetch(`http://localhost:1337/restaurants/${id}/?is_favorite=${status}`, {
         method: 'PUT'
-      });
-      store.put(currStore, id);
-      return tx.complete;
-    })
-      .then(function () {
-        console.log('transaction complete!');
       })
+        .then(() => {
+          store.put(currStore, id);
+          return tx.complete;
+        })
+        .then(function () {
+          console.log('transaction complete!');
+        })
+        .catch(() => {
+          dbPromise.then(db => {
+            const tx = db.transaction('tempStorage', 'readwrite');
+            const store = tx.objectStore('tempStorage');
+
+            const favToStore = {
+              id: id,
+              is_favorite: status,
+              type: 'favorite'
+            };
+            const stashFav = store.add(favToStore);
+            return tx.complete;
+          })
+        })
+    })
   }
 
   static toggleFav(button, id) {
@@ -313,6 +364,7 @@ class DBHelper {
       dbPromise.then(db => {
         const tx = db.transaction('tempStorage', 'readwrite');
         const store = tx.objectStore('tempStorage');
+        review.type = 'review';
         const addReviewToTemp = store.add(review, review.id);
         return tx.complete;
       });
