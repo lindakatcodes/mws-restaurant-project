@@ -317,7 +317,6 @@ class DBHelper {
 
   static stashReview(status, review) {
     // if user is online, add review to main db
-    console.log(`in stashReview - here's the review we're saving: ${review}`);
     if (status === 'online') {
       dbPromise.then(db => {
         const tx = db.transaction('reviews', 'readwrite');
