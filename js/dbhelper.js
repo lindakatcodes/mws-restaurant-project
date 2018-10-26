@@ -3,7 +3,7 @@
  */
 
 // First - open our db, or initialize if it's the first time
-const dbPromise = idb.open('restaurantReviewSite', 5, function (upgradeDb) {
+const dbPromise = idb.open('restaurantReviewSite', 6, function (upgradeDb) {
   switch (upgradeDb.oldVersion) {
     case 0:
     case 1:
@@ -22,6 +22,16 @@ const dbPromise = idb.open('restaurantReviewSite', 5, function (upgradeDb) {
         keypath: 'id',
         autoIncrement: true
       })
+    case 5:
+      var restIndex = upgradeDb.transaction.objectStore('tempStorage');
+      restIndex.createIndex('rest_id', 'restaurant_id');
+
+      upgradeDb.createObjectStore('tempReviews', {
+        keypath: 'id'
+      })
+
+      var revIndex = upgradeDb.transaction.objectStore('tempReviews');
+      revIndex.createIndex('rest_id', 'restaurant_id');
   };
 });
 
@@ -289,7 +299,7 @@ class DBHelper {
           const store = tx.objectStore('tempStorage');
 
           const favToStore = {
-            id: id,
+            restaurant_id: id,
             is_favorite: status,
             type: 'favorite'
           };
@@ -328,10 +338,10 @@ class DBHelper {
     // if user is offline, add review to temp db
     if (status === 'offline') {
       dbPromise.then(db => {
-        const tx = db.transaction('tempStorage', 'readwrite');
-        const store = tx.objectStore('tempStorage');
+        const tx = db.transaction('tempReviews', 'readwrite');
+        const store = tx.objectStore('tempReviews');
         review.type = 'review';
-        const addReviewToTemp = store.add(review, review.id);
+        const addReviewToTemp = store.add(review);
         return tx.complete;
       });
     }
@@ -339,13 +349,44 @@ class DBHelper {
 
   static updateServer() {
 
-    // check if tempStorage has any items
+    // check if tempStorage has any items - these will be favorite updates
     dbPromise.then(function (db) {
       const tx = db.transaction('tempStorage', 'readwrite');
       const store = tx.objectStore('tempStorage');
       return store.openCursor();
     })
       .then(function cycleItems(cursor) {
+        if (!cursor) return;
+
+        if (cursor.value.type === 'favorite') {
+          // favorite update 
+          // update server with new status
+          fetch(`http://localhost:1337/restaurants/${cursor.value.restaurant_id}/?is_favorite=${cursor.value.is_favorite}`, {
+            method: 'PUT'
+          })
+          // then update storeInfo db with status
+          dbPromise.then(async db => {
+            const tx = db.transaction('storeInfo', 'readwrite');
+            const store = tx.objectStore('storeInfo');
+
+            const req = await store.get(cursor.value.restaurant_id);
+            const currStore = req;
+            currStore.is_favorite = cursor.value.is_favorite;
+            store.put(currStore, cursor.value.restaurant_id);
+          })
+        }
+
+        cursor.delete();
+        return cursor.continue().then(cycleItems);
+      })
+
+    // now check tempReviews - this will have offline reviews saved
+    dbPromise.then(function (db) {
+      const tx = db.transaction('tempReviews', 'readwrite');
+      const store = tx.objectStore('tempReviews');
+      return store.openCursor();
+    })
+      .then(function cycleReviews(cursor) {
         if (!cursor) return;
 
         if (cursor.value.type === 'review') {
@@ -369,28 +410,7 @@ class DBHelper {
             store.add(review);
           });
         }
-
-        if (cursor.value.type === 'favorite') {
-          // favorite update 
-          // update server with new status
-          fetch(`http://localhost:1337/restaurants/${cursor.value.id}/?is_favorite=${cursor.value.is_favorite}`, {
-            method: 'PUT'
-          })
-          // then update storeInfo db with status
-          dbPromise.then(async db => {
-            const tx = db.transaction('storeInfo', 'readwrite');
-            const store = tx.objectStore('storeInfo');
-
-            const req = await store.get(cursor.value.id);
-            const currStore = req;
-            currStore.is_favorite = cursor.value.is_favorite;
-            store.put(currStore, cursor.value.id);
-          })
-        }
-
-        cursor.delete();
-        return cursor.continue().then(cycleItems);
       })
-  }
+    }
 
 } //end of class
