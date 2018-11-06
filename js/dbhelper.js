@@ -60,6 +60,11 @@ class DBHelper {
             dbPromise.then(async db => { // start a separate transaction for each restaurant, to see if it's in db
               const tx = db.transaction('storeInfo', 'readwrite');
               const store = tx.objectStore('storeInfo');
+
+              if (!restaurant.hasOwnProperty('offlineUpdate')) {
+                restaurant.offlineUpdate = false;
+              }
+
               // try to get restaurant by id - if it's there, just say it's there - if not, add to db
               const request = await store.get(restaurant.id);
               if (!request) {
@@ -104,6 +109,11 @@ class DBHelper {
             dbPromise.then(async db => {
               const tx = db.transaction('reviews', 'readwrite');
               const store = tx.objectStore('reviews');
+
+              if (!review.hasOwnProperty('offlineUpdate')) {
+                review.offlineUpdate = false;
+              }
+
               const request = await store.get(review.id);
               if (!request) {
                 console.log('new review found! adding to cache');
@@ -117,9 +127,6 @@ class DBHelper {
           const error = (`Request failed: ${response.status} - ${response.statusText}`);
           callback(error, null);
         }
-      })
-      .then(() => {
-
       })
       .catch(function () { // then, if the fetch fails, we call our db and check there
         console.log(`inside the catch function of fetchReviewsById`);
@@ -294,16 +301,17 @@ class DBHelper {
         })
       })
       .catch(() => {
-        dbPromise.then(db => {
-          const tx = db.transaction('tempStorage', 'readwrite');
-          const store = tx.objectStore('tempStorage');
+        dbPromise.then(async db => {
+          const tx = db.transaction('storeInfo', 'readwrite');
+          const store = tx.objectStore('storeInfo');
 
-          const favToStore = {
-            restaurant_id: id,
-            is_favorite: status,
-            type: 'favorite'
-          };
-          const stashFav = store.add(favToStore);
+          const req = await store.get(id);
+          const currStore = req;
+          currStore.is_favorite = status;
+          currStore.offlineUpdate = true;
+
+          store.put(currStore, id);
+          console.log('favorite status is marked! will be updated on server when reconnected.');
           return tx.complete;
         })
       })
@@ -338,10 +346,10 @@ class DBHelper {
     // if user is offline, add review to temp db
     if (status === 'offline') {
       dbPromise.then(db => {
-        const tx = db.transaction('tempReviews', 'readwrite');
-        const store = tx.objectStore('tempReviews');
-        review.type = 'review';
-        const addReviewToTemp = store.add(review);
+        const tx = db.transaction('reviews', 'readwrite');
+        const store = tx.objectStore('reviews');
+        review.offlineUpdate = true;
+        const addReviewToTemp = store.add(review, review.id);
         return tx.complete;
       });
     }
@@ -349,6 +357,52 @@ class DBHelper {
 
   static updateServer() {
 
+    //first check storeInfo for favorite updates
+    dbPromise.then(function (db) {
+      const tx = db.transaction('storeInfo', 'readwrite');
+      const store = tx.objectStore('storeInfo');
+      return store.openCursor();
+    })
+      .then(function cycleItems(restaurant) {
+        if (!restaurant) return;
+
+        if (restaurant.value.offlineUpdate) {
+          restaurant.value.offlineUpdate = false;
+          fetch(`http://localhost:1337/restaurants/${restaurant.value.id}/?is_favorite=${restaurant.value.is_favorite}`, {
+            method: 'PUT'
+          })
+        }
+        return restaurant.continue().then(cycleItems);
+      })
+
+    // then check reviews for new ones
+    dbPromise.then(function (db) {
+      const tx = db.transaction('reviews', 'readwrite');
+      const store = tx.objectStore('reviews');
+      return store.openCursor();
+    })
+      .then(function cycleReviews(cursor) {
+        if (!cursor) return;
+
+        if (cursor.value.offlineUpdate) {
+          // add new reviews
+          // set up review as requested in server options - will remove type key
+          const review = {
+            "restaurant_id": cursor.value.restaurant_id,
+            "name": cursor.value.name,
+            "rating": parseInt(cursor.value.rating, 10),
+            "comments": cursor.value.comments,
+            "offlineUpdate": false
+          }
+          // post to server and add to reviews db
+          fetch('http://localhost:1337/reviews/', {
+            method: 'POST',
+            body: JSON.stringify(review)
+          })
+        }
+      })
+
+    /*
     // check if tempStorage has any items - these will be favorite updates
     dbPromise.then(function (db) {
       const tx = db.transaction('tempStorage', 'readwrite');
@@ -411,6 +465,7 @@ class DBHelper {
           });
         }
       })
-    }
+      */
+  }
 
 } //end of class
