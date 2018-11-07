@@ -3,7 +3,7 @@
  */
 
 // First - open our db, or initialize if it's the first time
-const dbPromise = idb.open('restaurantReviewSite', 6, function (upgradeDb) {
+const dbPromise = idb.open('restaurantReviewSite', 7, function (upgradeDb) {
   switch (upgradeDb.oldVersion) {
     case 0:
     case 1:
@@ -17,21 +17,6 @@ const dbPromise = idb.open('restaurantReviewSite', 6, function (upgradeDb) {
     case 3:
       var newIndex = upgradeDb.transaction.objectStore('reviews');
       newIndex.createIndex('rest_ID', 'restaurant_id');
-    case 4:
-      upgradeDb.createObjectStore('tempStorage', {
-        keypath: 'id',
-        autoIncrement: true
-      })
-    case 5:
-      var restIndex = upgradeDb.transaction.objectStore('tempStorage');
-      restIndex.createIndex('rest_id', 'restaurant_id');
-
-      upgradeDb.createObjectStore('tempReviews', {
-        keypath: 'id'
-      })
-
-      var revIndex = upgradeDb.transaction.objectStore('tempReviews');
-      revIndex.createIndex('rest_id', 'restaurant_id');
   };
 });
 
@@ -334,25 +319,17 @@ class DBHelper {
   }
 
   static stashReview(status, review) {
-    // if user is online, add review to main db
-    if (status === 'online') {
-      dbPromise.then(db => {
-        const tx = db.transaction('reviews', 'readwrite');
-        const store = tx.objectStore('reviews');
-        const addReviewToMain = store.add(review, review.id);
-        return tx.complete;
-      });
-    }
-    // if user is offline, add review to temp db
+    console.log(`review to stash: ${review.value}`);
+    // if user is offline, turn update flag on
     if (status === 'offline') {
-      dbPromise.then(db => {
-        const tx = db.transaction('reviews', 'readwrite');
-        const store = tx.objectStore('reviews');
-        review.offlineUpdate = true;
-        const addReviewToTemp = store.add(review, review.id);
-        return tx.complete;
-      });
+      review.offlineUpdate = true;
     }
+    dbPromise.then(db => {
+      const tx = db.transaction('reviews', 'readwrite');
+      const store = tx.objectStore('reviews');
+      const addReview = store.add(review);
+      return tx.complete;
+    });
   }
 
   static updateServer() {
@@ -365,13 +342,23 @@ class DBHelper {
     })
       .then(function cycleItems(restaurant) {
         if (!restaurant) return;
-
+        // check each store to see if update flag is on
         if (restaurant.value.offlineUpdate) {
-          restaurant.value.offlineUpdate = false;
+          // add the updated favorite status to the server
           fetch(`http://localhost:1337/restaurants/${restaurant.value.id}/?is_favorite=${restaurant.value.is_favorite}`, {
             method: 'PUT'
           })
+          // then change the flag and update it on idb
+          dbPromise.then(async db => {
+            const tx = db.transaction('storeInfo', 'readwrite');
+            const store = tx.objectStore('storeInfo');
+
+            const req = await store.get(restaurant.value.id);
+            req.offlineUpdate = false;
+            store.put(req, req.id);
+          })
         }
+        // then, go to the next store and check again
         return restaurant.continue().then(cycleItems);
       })
 
@@ -383,23 +370,26 @@ class DBHelper {
     })
       .then(function cycleReviews(cursor) {
         if (!cursor) return;
-
+        // again, check current reviews in idb for update flag
         if (cursor.value.offlineUpdate) {
-          // add new reviews
-          // set up review as requested in server options - will remove type key
-          const review = {
-            "restaurant_id": cursor.value.restaurant_id,
-            "name": cursor.value.name,
-            "rating": parseInt(cursor.value.rating, 10),
-            "comments": cursor.value.comments,
-            "offlineUpdate": false
-          }
-          // post to server and add to reviews db
+
+          // post new review to server
           fetch('http://localhost:1337/reviews/', {
             method: 'POST',
             body: JSON.stringify(review)
           })
+
+          // then switch update flag off and post to idb
+          dbPromise.then(async db => {
+            const tx = db.transaction('reviews', 'readwrite');
+            const store = tx.objectStore('reviews');
+            const req = await store.get(cursor.value.id);
+            req.offlineUpdate = false;
+            store.put(req, req.id);
+          })
         }
+        // then go to next review and do it all again
+        return cursor.continue().then(cycleReviews);
       })
 
     /*
