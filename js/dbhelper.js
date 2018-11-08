@@ -319,17 +319,30 @@ class DBHelper {
   }
 
   static stashReview(status, review) {
-    console.log(`review to stash: ${review.value}`);
-    // if user is offline, turn update flag on
+    // we're offline, a few things to do
     if (status === 'offline') {
+      // set update flag on
       review.offlineUpdate = true;
+      // get the id of the last item in our db, then set review.id to that +1
+      // then add the review to the db
+      dbPromise.then(async db => {
+        const tx = db.transaction('reviews', 'readwrite');
+        const store = tx.objectStore('reviews');
+        const allStores = await store.getAll();
+        const lastID = allStores[allStores.length - 1].id;
+        review.id = lastID + 1;
+        return store.add(review, review.id);
+      })
     }
-    dbPromise.then(db => {
-      const tx = db.transaction('reviews', 'readwrite');
-      const store = tx.objectStore('reviews');
-      const addReview = store.add(review);
-      return tx.complete;
-    });
+
+    if (status === 'online') {
+      // we're online, just add review to idb
+      dbPromise.then(db => {
+        const tx = db.transaction('reviews', 'readwrite');
+        const store = tx.objectStore('reviews');
+        return store.add(review, review.id);
+      });
+    }
   }
 
   static updateServer() {
@@ -376,7 +389,7 @@ class DBHelper {
           // post new review to server
           fetch('http://localhost:1337/reviews/', {
             method: 'POST',
-            body: JSON.stringify(review)
+            body: JSON.stringify(cursor.value)
           })
 
           // then switch update flag off and post to idb
@@ -391,71 +404,6 @@ class DBHelper {
         // then go to next review and do it all again
         return cursor.continue().then(cycleReviews);
       })
-
-    /*
-    // check if tempStorage has any items - these will be favorite updates
-    dbPromise.then(function (db) {
-      const tx = db.transaction('tempStorage', 'readwrite');
-      const store = tx.objectStore('tempStorage');
-      return store.openCursor();
-    })
-      .then(function cycleItems(cursor) {
-        if (!cursor) return;
-
-        if (cursor.value.type === 'favorite') {
-          // favorite update 
-          // update server with new status
-          fetch(`http://localhost:1337/restaurants/${cursor.value.restaurant_id}/?is_favorite=${cursor.value.is_favorite}`, {
-            method: 'PUT'
-          })
-          // then update storeInfo db with status
-          dbPromise.then(async db => {
-            const tx = db.transaction('storeInfo', 'readwrite');
-            const store = tx.objectStore('storeInfo');
-
-            const req = await store.get(cursor.value.restaurant_id);
-            const currStore = req;
-            currStore.is_favorite = cursor.value.is_favorite;
-            store.put(currStore, cursor.value.restaurant_id);
-          })
-        }
-
-        cursor.delete();
-        return cursor.continue().then(cycleItems);
-      })
-
-    // now check tempReviews - this will have offline reviews saved
-    dbPromise.then(function (db) {
-      const tx = db.transaction('tempReviews', 'readwrite');
-      const store = tx.objectStore('tempReviews');
-      return store.openCursor();
-    })
-      .then(function cycleReviews(cursor) {
-        if (!cursor) return;
-
-        if (cursor.value.type === 'review') {
-          // add new reviews
-          // set up review as requested in server options - will remove type key
-          const review = {
-            "restaurant_id": cursor.value.restaurant_id,
-            "name": cursor.value.name,
-            "rating": parseInt(cursor.value.rating, 10),
-            "comments": cursor.value.comments
-          }
-          // post to server and add to reviews db
-          fetch('http://localhost:1337/reviews/', {
-            method: 'POST',
-            body: JSON.stringify(review)
-          })
-          dbPromise.then(async db => {
-            const tx = db.transaction('reviews', 'readwrite');
-            const store = tx.objectStore('reviews');
-            console.log('adding an offline stashed review to the db');
-            store.add(review);
-          });
-        }
-      })
-      */
   }
 
 } //end of class
