@@ -383,22 +383,33 @@ class DBHelper {
     })
       .then(function cycleReviews(cursor) {
         if (!cursor) return;
-        // again, check current reviews in idb for update flag
-        if (cursor.value.offlineUpdate) {
+        // store the cursor for easier access
+        const currReview = cursor.value;
+        console.log(currReview);
+        // check current reviews in idb for update flag
+        if (currReview.offlineUpdate) {
 
-          // post new review to server
+          // first, find the current review in idb and delete that - we will likely need to change the review's id, so will post it again once we do that
+          cursor.delete();
+
+          // then, we'll set the id to undefined, so the server will give it the actual unique id (can be duplicates with offline method), and turn the update flag to false
+          currReview.id = undefined;
+          currReview.offlineUpdate = false;
+
+          // next, post the updated review to server
           fetch('http://localhost:1337/reviews/', {
             method: 'POST',
-            body: JSON.stringify(cursor.value)
+            body: JSON.stringify(currReview)
           })
-
-          // then switch update flag off and post to idb
-          dbPromise.then(async db => {
-            const tx = db.transaction('reviews', 'readwrite');
-            const store = tx.objectStore('reviews');
-            const req = await store.get(cursor.value.id);
-            req.offlineUpdate = false;
-            store.put(req, req.id);
+          .then(response => response.json())
+          .then(response => {
+            
+            // then post to idb
+            dbPromise.then(async db => {
+              const tx = db.transaction('reviews', 'readwrite');
+              const store = tx.objectStore('reviews');
+              store.add(response, response.id);
+            })
           })
         }
         // then go to next review and do it all again
