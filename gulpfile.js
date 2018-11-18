@@ -48,8 +48,14 @@ gulp.task('browser-sync', function() {
 
 gulp.task('html', function() {
     gulp.src(['./index.html', './restaurant.html'])
+    .pipe(gulp.dest('dist/'))
     .pipe(browserSync.reload({stream:true}));
 });
+
+gulp.task('copy-extras', function() {
+    gulp.src(['./idb.js', './manifest.json', './sw.js', './img/icons/*'])
+    .pipe(gulp.dest('dist/'))
+})
 
 gulp.task('css', ['clean-dist-css'], function() {
     gulp.src('./css/*.css')
@@ -90,6 +96,6 @@ gulp.task('watch', function() {
     gulp.watch('./js/*.js', ['js']);
 });
 
-gulp.task('build', ['main-js', 'single-js', 'js', 'css']);
+gulp.task('build', ['main-js', 'single-js', 'js', 'css', 'html', 'copy-extras']);
 
 gulp.task('start', ['browser-sync', 'build', 'watch']);
