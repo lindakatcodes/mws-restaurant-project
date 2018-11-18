@@ -48,6 +48,7 @@ gulp.task('browser-sync', function() {
 
 gulp.task('html', function() {
     gulp.src('./*.html')
+    .pipe(gulp.dest('dist/'))
     .pipe(browserSync.reload({stream:true}));
 });
 
