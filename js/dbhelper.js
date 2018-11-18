@@ -268,7 +268,7 @@ class DBHelper {
 
   // Toggle favorite status
   static favStatus(status, id) {
-    fetch(`http://localhost:1337/restaurants/${id}/?is_favorite=${status}`, {
+    fetch(`https://mws-backend-server.herokuapp.com/restaurants/${id}/?is_favorite=${status}`, {
       method: 'PUT'
     })
       .then(() => {
@@ -358,7 +358,7 @@ class DBHelper {
         // check each store to see if update flag is on
         if (restaurant.value.offlineUpdate) {
           // add the updated favorite status to the server
-          fetch(`http://localhost:1337/restaurants/${restaurant.value.id}/?is_favorite=${restaurant.value.is_favorite}`, {
+          fetch(`https://mws-backend-server.herokuapp.com/restaurants/${restaurant.value.id}/?is_favorite=${restaurant.value.is_favorite}`, {
             method: 'PUT'
           })
           // then change the flag and update it on idb
@@ -385,7 +385,6 @@ class DBHelper {
         if (!cursor) return;
         // store the cursor for easier access
         const currReview = cursor.value;
-        console.log(currReview);
         // check current reviews in idb for update flag
         if (currReview.offlineUpdate) {
 
@@ -397,7 +396,7 @@ class DBHelper {
           currReview.offlineUpdate = false;
 
           // next, post the updated review to server
-          fetch('http://localhost:1337/reviews/', {
+          fetch('https://mws-backend-server.herokuapp.com/reviews/', {
             method: 'POST',
             body: JSON.stringify(currReview)
           })
