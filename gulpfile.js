@@ -15,14 +15,6 @@ gulp.task('clean-images', function() {
     return del('./img/optimized');
 });
 
-gulp.task('clean-dist-css', function() {
-    return del('./dist/css/*.css');
-});
-
-gulp.task('clean-dist-js', function() {
-    return del('./dist/js');
-});
-
 gulp.task('reduce-images', ['clean-images'], function() {
     gulp.src('./img/*.{jpg, png}') 
         .pipe(resize({ 
@@ -52,12 +44,17 @@ gulp.task('html', function() {
     .pipe(browserSync.reload({stream:true}));
 });
 
+gulp.task('copy-icons', function() {
+    gulp.src('./img/icons/*.*')
+    .pipe(gulp.dest('dist/img/icons/'))
+})
+
 gulp.task('copy-extras', function() {
-    gulp.src(['./idb.js', './manifest.json', './sw.js', './img/icons/*'])
+    gulp.src(['./idb.js', './manifest.json', './sw.js'])
     .pipe(gulp.dest('dist/'))
 })
 
-gulp.task('css', ['clean-dist-css'], function() {
+gulp.task('css', function() {
     gulp.src('./css/*.css')
     .pipe(sourcemaps.init())
     .pipe(prefix())
@@ -67,7 +64,7 @@ gulp.task('css', ['clean-dist-css'], function() {
     .pipe(browserSync.reload({stream:true}));
 });
 
-gulp.task('main-js', ['clean-dist-js'], function() {
+gulp.task('main-js', function() {
     gulp.src(['./js/dbhelper.js', './js/main.js'])
     .pipe(sourcemaps.init())
     .pipe(concat('index.js', {newLine: '\r\n'}))
@@ -76,7 +73,7 @@ gulp.task('main-js', ['clean-dist-js'], function() {
     .pipe(gulp.dest('dist/js'))
 });
 
-gulp.task('single-js', ['clean-dist-js'], function() {
+gulp.task('single-js', function() {
     gulp.src(['./js/dbhelper.js', './js/restaurant_info.js'])
     .pipe(sourcemaps.init())
     .pipe(concat('restaurant.js', {newLine: '\r\n'}))
@@ -85,7 +82,7 @@ gulp.task('single-js', ['clean-dist-js'], function() {
     .pipe(gulp.dest('dist/js'))
 });
 
-gulp.task('js', ['clean-dist-js', 'main-js', 'single-js'], function() {
+gulp.task('js', ['main-js', 'single-js'], function() {
     gulp.src('./dist/js/*.js')
     .pipe(browserSync.reload({stream:true}));
 });
@@ -96,6 +93,6 @@ gulp.task('watch', function() {
     gulp.watch('./js/*.js', ['js']);
 });
 
-gulp.task('build', ['main-js', 'single-js', 'js', 'css', 'html', 'copy-extras']);
+gulp.task('build', ['js', 'css', 'html', 'copy-icons','copy-extras']);
 
 gulp.task('start', ['browser-sync', 'build', 'watch']);
