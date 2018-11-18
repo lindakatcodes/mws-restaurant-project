@@ -47,7 +47,7 @@ gulp.task('browser-sync', function() {
 });
 
 gulp.task('html', function() {
-    gulp.src('./*.html')
+    gulp.src(['./index.html', './restaurant.html'])
     .pipe(gulp.dest('dist/'))
     .pipe(browserSync.reload({stream:true}));
 });
