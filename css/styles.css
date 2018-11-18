@@ -388,19 +388,17 @@ nav h1 a:focus {
 }
 
 .formDivider {
-  padding: 2% 0 4%;
+  padding: 2% 5%;
   width: 95%;
 }
 
 .formDivider label {
-  width: 30%;
-  float: left;
-  text-align: right;
-  padding-right: 3%;
+  width: 60%;
+  text-align: center;
 }
 
 .formDivider input {
-  width: 60%;
+  width: 90%;
   vertical-align: top;
   border: 1px solid var(--darkgray);
   border-radius: 5px;
@@ -408,7 +406,7 @@ nav h1 a:focus {
 }
 
 .formDivider textarea {
-  width: 60%;
+  width: 90%;
   height: 8em;
   margin-bottom: 2%;
   border: 1px solid var(--darkgray);
@@ -439,6 +437,7 @@ nav h1 a:focus {
   }
 }
 
+
 @media screen and (min-width: 600px) {
   #map-container {
     height: 65vh;
@@ -461,6 +460,25 @@ nav h1 a:focus {
   #restaurants-list li a {
     font-size: 1.1em;
     width: 75%;
+  }
+
+  .formDivider {
+    padding: 2% 0 4%;
+    width: 95%;
+  }
+
+  .formDivider label {
+    float: left;
+    text-align: right;
+    padding-right: 3%;
+  }
+
+  .formDivider input {
+    width: 60%;
+  }
+
+  .formDivider textarea {
+    width: 60%;
   }
 }
 
