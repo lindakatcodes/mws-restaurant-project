@@ -3,17 +3,17 @@
     "name": "Restaurant Reviews",
     "icons": [
       {
-        "src": "/img/icons/icon-512x512.png",
+        "src": "img/icons/icon-512x512.png",
         "type": "image/png",
         "sizes": "512x512"
       },
       {
-        "src": "/img/icons/icon-192x192.png",
+        "src": "img/icons/icon-192x192.png",
         "type": "image/png",
         "sizes": "192x192"
       }
     ],
-    "start_url": "/index.html",
+    "start_url": "index.html",
     "background_color": "#3397db",
     "display": "standalone",
     "theme_color": "#252831"
