@@ -263,7 +263,7 @@ newReview = (id, formDiv, data) => {
     "rating": parseInt(data.user_rating.value, 10),
     "comments": data.user_review.value
   };
-  const posturl = 'http://localhost:1337/reviews/';
+  const posturl = 'https://mws-backend-server.herokuapp.com/reviews';
 
   // try to post the review to the server
   fetch(posturl, {
