@@ -15,6 +15,10 @@ gulp.task('clean-images', function() {
     return del('./img/optimized');
 });
 
+gulp.task('clean-dist', function() {
+    return del('./dist');
+});
+
 gulp.task('reduce-images', ['clean-images'], function() {
     gulp.src('./img/*.{jpg, png}') 
         .pipe(resize({ 
