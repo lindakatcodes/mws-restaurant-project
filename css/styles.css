@@ -326,7 +326,7 @@ nav h1 a:focus {
   border-bottom: 1px solid var(--darkgray);
 }
 #restaurant-hours {
-  width: 80%;
+  width: 90%;
   margin: 0 10%;
 }
 #restaurant-container, #reviews-container {
