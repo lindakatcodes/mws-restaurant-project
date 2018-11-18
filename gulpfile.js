@@ -90,6 +90,6 @@ gulp.task('watch', function() {
     gulp.watch('./js/*.js', ['js']);
 });
 
-gulp.task('build', ['main-js', 'single-js', 'js', 'css']);
+gulp.task('build', ['main-js', 'single-js', 'js', 'css', 'html']);
 
 gulp.task('start', ['browser-sync', 'build', 'watch']);
