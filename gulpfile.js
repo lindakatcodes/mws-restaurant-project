@@ -48,7 +48,6 @@ gulp.task('browser-sync', function() {
 
 gulp.task('html', function() {
     gulp.src(['./index.html', './restaurant.html'])
-    .pipe(gulp.dest('dist/'))
     .pipe(browserSync.reload({stream:true}));
 });
 
@@ -91,6 +90,6 @@ gulp.task('watch', function() {
     gulp.watch('./js/*.js', ['js']);
 });
 
-gulp.task('build', ['main-js', 'single-js', 'js', 'css', 'html']);
+gulp.task('build', ['main-js', 'single-js', 'js', 'css']);
 
 gulp.task('start', ['browser-sync', 'build', 'watch']);
