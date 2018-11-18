@@ -49,6 +49,11 @@ gulp.task('copy-icons', function() {
     .pipe(gulp.dest('dist/img/icons/'))
 })
 
+gulp.task('copy-images', function() {
+    gulp.src('./img/optimized/*.*')
+    .pipe(gulp.dest('dist/img/optimized/'))
+})
+
 gulp.task('copy-extras', function() {
     gulp.src(['./idb.js', './manifest.json', './sw.js'])
     .pipe(gulp.dest('dist/'))
@@ -93,6 +98,6 @@ gulp.task('watch', function() {
     gulp.watch('./js/*.js', ['js']);
 });
 
-gulp.task('build', ['js', 'css', 'html', 'copy-icons','copy-extras']);
+gulp.task('build', ['js', 'css', 'html', 'copy-icons', 'copy-images', 'copy-extras']);
 
 gulp.task('start', ['browser-sync', 'build', 'watch']);
