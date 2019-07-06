@@ -205,6 +205,7 @@ formFunction = (rest_id) => {
   nameInput.type = 'text';
   nameInput.name = 'user_name';
   nameInput.id = 'name';
+  nameInput.placeholder = 'Your name';
   nameDiv.appendChild(nameLabel);
   nameDiv.appendChild(nameInput);
 
@@ -214,11 +215,12 @@ formFunction = (rest_id) => {
   rateDiv.className = 'formDivider';
   const rateLabel = document.createElement('label');
   rateLabel.htmlFor = 'rating';
-  rateLabel.innerHTML = 'Rating: <br> (1 low, 5 high)';
+  rateLabel.innerHTML = 'Rating:';
   const rateInput = document.createElement('input');
   rateInput.type = 'number';
   rateInput.name = 'user_rating';
   rateInput.id = 'rating';
+  rateInput.placeholder = '(1 low, 5 high)';
   rateDiv.appendChild(rateLabel);
   rateDiv.appendChild(rateInput);
 

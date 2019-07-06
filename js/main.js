@@ -141,6 +141,8 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
     ul.append(createRestaurantHTML(restaurant));
     addMarkersToMap();
   });
+  const loader = document.getElementsByClassName('loading')
+  loader[0].classList.add('hidden');
 };  
 
 /**
