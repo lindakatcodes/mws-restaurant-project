@@ -22,16 +22,16 @@
     "not dead"
   ],
   "devDependencies": {
-    "browser-sync": "^2.24.6",
+    "browser-sync": "^2.26.7",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
-    "gulp-rename": "^1.3.0",
     "gulp-autoprefixer": "^5.0.0",
-    "gulp-csso": "^3.0.1",
-    "gulp-image-resize": "^0.13.0",
-    "gulp-imagemin": "^4.1.0",
-    "gulp-sourcemaps": "^2.6.4",
     "gulp-concat": "^2.6.1",
+    "gulp-csso": "^3.0.1",
+    "gulp-image-resize": "^0.13.1",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sourcemaps": "^2.6.5",
     "gulp-uglify-es": "^1.0.4"
   }
 }
