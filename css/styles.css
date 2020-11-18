@@ -170,6 +170,25 @@ nav h1 a:focus {
   outline: 4px solid var(--yellow);
 }
 
+/* ====================== Loading ================================= */
+.loading {
+  display: flex;
+  justify-content: center;
+
+}
+
+.loading-img {
+  margin: 2% 4%;
+}
+
+.loading-text {
+  font-size: 1.75em;
+}
+
+.hidden {
+  display: none;
+}
+
 /* ====================== Restaurant Listing ====================== */
 #restaurants-list {
   background-color: var(--lightgray);
@@ -383,18 +402,15 @@ nav h1 a:focus {
   color: var(--purple);
 }
 
-.addReviewForm {
-  display: flex;
-  flex-direction: column;
-}
-
 .formDivider {
-  padding: 2% 0 2% 9%;
-  width: 95%;
+  padding: 2% 8%;
+  margin: 1% 2%;
 }
 
 .formDivider label {
   width: 60%;
+  display: block;
+  margin-left: 3vw;
 }
 
 .formDivider input {
@@ -402,7 +418,8 @@ nav h1 a:focus {
   vertical-align: top;
   border: 1px solid var(--darkgray);
   border-radius: 5px;
-  padding: 3%;
+  padding: 2%;
+  margin-left: 3vw;
 }
 
 .formDivider textarea {
@@ -410,6 +427,8 @@ nav h1 a:focus {
   height: 8em;
   margin-bottom: 2%;
   border: 1px solid var(--darkgray);
+  border-radius: 5px;
+  margin-left: 3vw;
 }
 
 #submitReview {
@@ -482,28 +501,9 @@ nav h1 a:focus {
     margin: 0 10%;
   }
 
-  .formDivider {
-    padding: 2% 0 4%;
-    width: 95%;
-  }
-
-  .formDivider label {
-    float: left;
-    text-align: right;
-    padding-right: 3%;
-  }
-
-  .formDivider input {
-    width: 60%;
-  }
-
-  .formDivider textarea {
-    width: 60%;
-  }
-
   #submitReview {
     width: 30%;
-    margin: 0 25% 0 35%;
+    margin: 0 25% 2% 35%;
   }
 }
 
